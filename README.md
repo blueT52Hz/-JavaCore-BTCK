@@ -6,4 +6,6 @@ Các thành viên (D22):
 - Vũ Mạnh Hùng.
 - Nguyễn Hoa Thanh Tùng.
 
-Supporter: Hoàng Mạnh Dũng (D21)
+Supporter (D21): 
+- Hoàng Mạnh Dũng.
+- Nguyễn Quốc Hưng.
