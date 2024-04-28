@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83263974-253d-4a7b-abe5-a63107ee2a67" name="Changes" comment="" />
+    <list default="true" id="83263974-253d-4a7b-abe5-a63107ee2a67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__000.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__001.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__002.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__003.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__004.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__005.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__006.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__007.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__008.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/assets/Throw__009.png" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,6 +52,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -53,9 +67,11 @@
   "keyToString": {
     "Gradle.JavaCore-BTCK:core [build].executor": "Run",
     "Gradle.JavaCore-BTCK:desktop [build].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature2.-Nhân-vật-chính",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/MSI-PC/Documents/Java - ProPTIT/JavaCore-BTCK/project",
+    "last_opened_file_path": "D:/0000.CODE/00. ProPTIT/ProGameCup/BTCK/JavaCore-BTCK/project/assets",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -64,6 +80,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\0000.CODE\00. ProPTIT\ProGameCup\BTCK\JavaCore-BTCK\project\assets" />
+    </key>
+  </component>
   <component name="RunManager" selected="Gradle.JavaCore-BTCK:desktop [build]">
     <configuration name="JavaCore-BTCK:core [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
