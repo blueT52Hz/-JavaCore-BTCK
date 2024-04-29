@@ -15,6 +15,8 @@ public class MainGameScreen implements Screen {
     public static final float NINJA_HEIGHT_PIXEL = 38;
     public static float NINJA_X = 100;
     public static float NINJA_Y = 100;
+    public static float NINJA_NEXT_X = 100;
+    public static float NINJA_NEXT_Y = 100;
     public static float KUNAI_X = 100;
     public static float KUNAI_Y = 100;
     public static final float NINJA_WIDTH = NINJA_WIDTH_PIXEL*3;
@@ -40,15 +42,6 @@ public class MainGameScreen implements Screen {
     MyGdxGame game;
     public MainGameScreen(MyGdxGame game) {
         this.game = game;
-//        y = 15;
-//        x = MyGdxGame.WIDTH/2 - CHAR_WIDTH /2;
-//        roll = 2;
-//        rolls = new Animation[5];
-//        TextureRegion[][] rollSpriteSheet = TextureRegion.split(new Texture("char.png"), CHAR_WIDTH_PIXEL, CHAR_HEIGHT_PIXEL);
-//
-//        rolls[roll] = new Animation(CHAR_ANIMATION_SPEED, rollSpriteSheet[0]);
-
-
         stateTime = 0f;
         throwed = false;
     }
@@ -71,23 +64,26 @@ public class MainGameScreen implements Screen {
         float MOUSE_X = Gdx.input.getX();
         float MOUSE_Y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-        stateTime += deltaTime;
         game.batch.begin();
 
 
         if (Gdx.input.isTouched()){
-            NINJA_X = MOUSE_X;
-            NINJA_Y = MOUSE_Y;
+            NINJA_NEXT_X = MOUSE_X;
+            NINJA_NEXT_Y = MOUSE_Y;
             throwed = false;
             game.batch.draw(img, NINJA_X-NINJA_WIDTH/2, NINJA_Y - NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
         } else {
-            game.batch.draw((Texture) ninjaThrowAnimation.getKeyFrame(stateTime, false), NINJA_X-NINJA_WIDTH/2, NINJA_Y-NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+            if(!throwed) {
+                stateTime += deltaTime;
+                game.batch.draw((Texture) ninjaThrowAnimation.getKeyFrame(stateTime, true), NINJA_X-NINJA_WIDTH/2, NINJA_Y-NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+                if(stateTime >= 20 * deltaTime) {
+                    throwed = true;
+                    stateTime = 0f;
+                }
+            } else {
+                game.batch.draw(img, NINJA_X-NINJA_WIDTH/2, NINJA_Y - NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+            }
         }
-
-//        game.batch.draw(kunaiImage, 100, 100, 12, 60);
-
-//        game.batch.draw(new Texture("D:\\0000.CODE\\00. ProPTIT\\ProGameCup\\Assets\\1x\\Throw_1.png"), 100, 100, 128, 153);
-
 
         game.batch.end();
 
