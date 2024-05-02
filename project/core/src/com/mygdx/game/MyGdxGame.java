@@ -6,8 +6,8 @@ import com.mygdx.game.screens.MainMenuScreen;
 
 
 public class MyGdxGame extends Game {
-	public static final int WIDTH = 1900;
-	public static final int HEIGHT = 900;
+	public static final int WIDTH = 400;
+	public static final int HEIGHT = 720;
 	public SpriteBatch batch;
 
 	@Override

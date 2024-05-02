@@ -8,52 +8,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.entities.MainCharacter;
+import jdk.tools.jmod.Main;
 
 public class MainGameScreen implements Screen {
-    public static final float SPEED = 120;
-    public static final float NINJA_WIDTH_PIXEL = 32;
-    public static final float NINJA_HEIGHT_PIXEL = 38;
-    public static float NINJA_X = 100;
-    public static float NINJA_Y = 100;
-    public static float NINJA_NEXT_X = 100;
-    public static float NINJA_NEXT_Y = 100;
+
     public static float KUNAI_X = 100;
     public static float KUNAI_Y = 100;
-    public static final float NINJA_WIDTH = NINJA_WIDTH_PIXEL*3;
-    public static final float NINJA_HEIGHT = NINJA_HEIGHT_PIXEL*3;
-
-
-//    public static final float CHAR_ANIMATION_SPEED = 0.5f;
-//    public static final int CHAR_WIDTH_PIXEL = 17;
-//    public static final int CHAR_HEIGHT_PIXEL = 32;
-//    public static final int CHAR_WIDTH = CHAR_WIDTH_PIXEL * 3;
-//    public static final int CHAR_HEIGHT = CHAR_HEIGHT_PIXEL * 3;
-//    Animation[] rolls;
-
-    float x, y;
-    float preX, preY;
-    int roll;
+    public static float KUNAI_NEXT_X = 100;
+    public static float KUNAI_NEXT_Y = 100;
+    public MainCharacter ninja;
     float stateTime;
-    boolean throwed;
-    Texture img;
-    Texture kunaiImage;
 
-    Animation ninjaThrowAnimation;
     MyGdxGame game;
     public MainGameScreen(MyGdxGame game) {
         this.game = game;
-        stateTime = 0f;
-        throwed = false;
+        ninja = new MainCharacter();
     }
     @Override
     public void show () {
-        img = new Texture("char.png");
-        kunaiImage = new Texture("kunai.png");
-        Texture[] ninjaThrowImg = new Texture[9];
-        for(int i=0;i<9;++i) {
-            ninjaThrowImg[i] = new Texture(String.format("Throw__00%d.png", i));
-        }
-        ninjaThrowAnimation = new Animation(0.05f, ninjaThrowImg);
+        MainCharacter.load();
     }
 
     @Override
@@ -67,21 +41,38 @@ public class MainGameScreen implements Screen {
         game.batch.begin();
 
 
-        if (Gdx.input.isTouched()){
-            NINJA_NEXT_X = MOUSE_X;
-            NINJA_NEXT_Y = MOUSE_Y;
-            throwed = false;
-            game.batch.draw(img, NINJA_X-NINJA_WIDTH/2, NINJA_Y - NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+        if (Gdx.input.justTouched()){
+            if(ninja.throwed && ninja.displacement) {
+                ninja.displacement = false;
+                ninja.kunai.next_x = MOUSE_X;
+                ninja.kunai.next_y = MOUSE_Y;
+                ninja.throwed = false;
+                game.batch.draw(MainCharacter.waitImg, ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+                ninja.stateTime = 0f;
+            } else {
+                ninja.displacement = true;
+                ninja.x = ninja.kunai.x;
+                ninja.y = ninja.kunai.y;
+                game.batch.draw(MainCharacter.waitImg, ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+//                ninja.kunai.x=-1000;
+//                ninja.kunai.y=-1000;
+            }
+
         } else {
-            if(!throwed) {
-                stateTime += deltaTime;
-                game.batch.draw((Texture) ninjaThrowAnimation.getKeyFrame(stateTime, true), NINJA_X-NINJA_WIDTH/2, NINJA_Y-NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
-                if(stateTime >= 20 * deltaTime) {
-                    throwed = true;
-                    stateTime = 0f;
+            if(!ninja.throwed) {
+                ninja.stateTime += deltaTime;
+                game.batch.draw(MainCharacter.kunaiImg, ninja.x+MainCharacter.WIDTH/2, ninja.y, 8, 40);
+                game.batch.draw((Texture) MainCharacter.throwAnimation.getKeyFrame(ninja.stateTime, false), ninja.x-MainCharacter.WIDTH/2, ninja.y-MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+                if(ninja.stateTime >= 30 * deltaTime) {
+                    ninja.throwed = true;
+                    ninja.stateTime = 0f;
                 }
             } else {
-                game.batch.draw(img, NINJA_X-NINJA_WIDTH/2, NINJA_Y - NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+                ninja.kunai.x = ninja.kunai.next_x;
+                ninja.kunai.y = ninja.kunai.next_y;
+                ninja.stateTime += deltaTime;
+                game.batch.draw(MainCharacter.kunaiImg, ninja.kunai.x-4, ninja.kunai.y-20, 8, 40);
+                game.batch.draw((Texture) MainCharacter.glideAnimation.getKeyFrame(ninja.stateTime, true), ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
             }
         }
 
