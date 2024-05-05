@@ -7,6 +7,8 @@ public class Kunai {
     public static final float HEIGHT = 40;
     public float x;
     public float y;
+    public float before_x;
+    public float before_y;
     public float next_x;
     public float next_y;
 //    public Texture img;

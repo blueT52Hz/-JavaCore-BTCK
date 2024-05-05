@@ -18,13 +18,16 @@ public class MainCharacter {
     public static Animation glideAnimation;
     public static Texture waitImg;
     public static Texture kunaiImg;
+    public static Texture navigationImg;
     public float stateTime;
     public boolean throwed;
     public boolean displacement;
     public Kunai kunai;
+    public NavigationArrow navigationArrow;
 
     public MainCharacter() {
         this.kunai = new Kunai();
+        this.navigationArrow = new NavigationArrow();
         this.stateTime = 0f;
         this.throwed = true;
         displacement = false;
@@ -44,6 +47,7 @@ public class MainCharacter {
 
         waitImg = new Texture("Throw__000.png");
         kunaiImg = new Texture("Kunai.png");
+        navigationImg = new Texture("Arrow1.png");
     }
 
     public void draw(SpriteBatch batch, Animation animation, boolean looping) {
