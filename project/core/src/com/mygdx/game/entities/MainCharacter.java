@@ -47,7 +47,7 @@ public class MainCharacter {
 
         waitImg = new Texture("Throw__000.png");
         kunaiImg = new Texture("Kunai.png");
-        navigationImg = new Texture("Arrow1.png");
+        navigationImg = new Texture("Arrow2.png");
     }
 
     public void draw(SpriteBatch batch, Animation animation, boolean looping) {

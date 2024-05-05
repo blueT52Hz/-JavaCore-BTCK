@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.entities.Kunai;
 import com.mygdx.game.entities.MainCharacter;
 import com.mygdx.game.entities.NavigationArrow;
 import jdk.tools.jmod.Main;
@@ -68,9 +69,10 @@ public class MainGameScreen implements Screen {
             System.out.println(ninja.navigationArrow.rotation);
             sprite.setOriginCenter();
             sprite.setRotation(ninja.navigationArrow.rotation);
-            sprite.setBounds(ninja.kunai.x, ninja.kunai.y, NavigationArrow.WIDTH, NavigationArrow.HEIGHT);
+            sprite.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, NavigationArrow.WIDTH, NavigationArrow.HEIGHT);
             sprite.draw(batch);
-            //game.batch.draw(MainCharacter.navigationImg, ,);
+            spriteKunai.setOriginCenter();
+            spriteKunai.setRotation(ninja.navigationArrow.rotation);
         }
         if (Gdx.input.justTouched()){
             if(ninja.throwed && ninja.displacement) {
@@ -88,14 +90,13 @@ public class MainGameScreen implements Screen {
                 ninja.y = ninja.kunai.y;
                 spriteNinja.setBounds(ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
                 spriteNinja.draw(batchNinja);
-//                ninja.kunai.x=-1000;
-//                ninja.kunai.y=-1000;
             }
 
         } else {
             if(!ninja.throwed) {
                 ninja.stateTime += deltaTime;
-                spriteKunai.setBounds(ninja.x+MainCharacter.WIDTH/2, ninja.y, 8, 40);
+                spriteKunai.setBounds(ninja.x+MainCharacter.WIDTH/2, ninja.y, 40, 8);
+
                 spriteKunai.draw(batchKunai);
                 //game.batch.draw((Texture) MainCharacter.throwAnimation.getKeyFrame(ninja.stateTime, false), ninja.x-MainCharacter.WIDTH/2, ninja.y-MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
                 if(ninja.stateTime >= 30 * deltaTime) {
@@ -108,7 +109,7 @@ public class MainGameScreen implements Screen {
                 ninja.kunai.x = ninja.kunai.next_x;
                 ninja.kunai.y = ninja.kunai.next_y;
                 ninja.stateTime += deltaTime;
-                spriteKunai.setBounds(ninja.kunai.x-4, ninja.kunai.y-20, 8, 40);
+                spriteKunai.setBounds(ninja.kunai.x-4, ninja.kunai.y-20, 40, 8);
                 spriteKunai.draw(batchKunai);
                 //game.batch.draw((Texture) MainCharacter.glideAnimation.getKeyFrame(ninja.stateTime, true), ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
             }

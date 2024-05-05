@@ -3,8 +3,8 @@ package com.mygdx.game.entities;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Kunai {
-    public static final float WIDTH = 8;
-    public static final float HEIGHT = 40;
+    public static final float WIDTH = 40;
+    public static final float HEIGHT = 8;
     public float x;
     public float y;
     public float before_x;
