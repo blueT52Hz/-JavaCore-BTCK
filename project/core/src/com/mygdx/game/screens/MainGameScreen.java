@@ -90,7 +90,7 @@ public class MainGameScreen implements Screen {
                 {
                     ninja.kunai.next_y += ninja.kunai.ySpeed *deltaTime - 5*deltaTime*deltaTime;
                 }
-                else ninja.kunai.y = 5*deltaTime*deltaTime;
+                else ninja.kunai.y += 5*deltaTime*deltaTime;
                 //System.out.println(ninja.kunai.x + " " + ninja.kunai.y)
 
             spriteKunai.setBounds(ninja.kunai.x + ninja.kunai.next_x - 4, ninja.kunai.y + ninja.kunai.next_y-20, 40, 8);
