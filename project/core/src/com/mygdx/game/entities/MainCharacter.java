@@ -12,25 +12,23 @@ public class MainCharacter {
     public static final float HEIGHT = HEIGHT_PIXEL*8/3;
     public float x;
     public float y;
-    public float next_x;
-    public float next_y;
     public static Animation throwAnimation;
     public static Animation glideAnimation;
     public static Texture waitImg;
     public static Texture kunaiImg;
     public static Texture navigationImg;
-    public float stateTime;
     public boolean throwed;
-    public boolean displacement;
+    public float stateTime;
     public Kunai kunai;
     public NavigationArrow navigationArrow;
+    public float speedFall = 10; // tốc độ rơi xuống
+    public float speed;
 
     public MainCharacter() {
-        this.kunai = new Kunai();
-        this.navigationArrow = new NavigationArrow();
-        this.stateTime = 0f;
-        this.throwed = true;
-        displacement = false;
+        kunai = new Kunai();
+        navigationArrow = new NavigationArrow();
+        stateTime = 0f;
+        throwed = false;
         x = 100;
         y = 100;
     }
@@ -55,5 +53,10 @@ public class MainCharacter {
     }
     public void draw(SpriteBatch batch, Texture texture, boolean looping) {
         batch.draw(texture, x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+    }
+    public void update (float delta) {
+        speed = -speedFall;
+        //x += speed * delta;
+        y += speed * delta;
     }
 }

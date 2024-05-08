@@ -2,33 +2,48 @@ package com.mygdx.game.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.mygdx.game.MyGdxGame;
 
 public class Kunai {
     public static final float WIDTH = 40;
     public static final float HEIGHT = 8;
     public float x;
     public float y;
-    public float before_x;
-    public float before_y;
-    public float next_x;
-    public float next_y;
-
-    public float speed = 20;
-    public float timeMoving = 0;
-    public float xSpeed, ySpeed;
+    public float speed; // speed của kunai
+    public float xSpeed, ySpeed; // speed theo 2 chiều
+    public boolean speedChanged; // trạng thái để thay đổi speed của Kunai
+    public float rotation;// góc tạo bởi Kunai và trục Ox
 //    public Texture img;
     public Kunai() {
-        next_x = 0;
-        next_y = 0;
+        x = 40;
+        y = 50;
+        speed = 100;
+        speedChanged = false;
 //        img = new Texture("Kunai.png");
     }
-    public void update(float delta, float cos) {
-        xSpeed = speed*cos;
-        ySpeed = speed* MathUtils.sin(MathUtils.acos(cos)) - 10 * delta;
-        next_x += xSpeed * delta;
-        if (ySpeed > 0)
-        {
-            next_y +=  ySpeed*delta- 5*delta*delta;
-        }else next_y += 5*delta*delta;
+
+    public void updateSpeedStartFly(float MOUSE_X, float MOUSE_Y) {
+        if (MOUSE_X >= x) xSpeed = speed;
+        else xSpeed = -speed;
+        if (MOUSE_Y >= y) ySpeed = speed;
+        else ySpeed = -speed;
+    }
+    public void updateCollision() {
+        if (x <= 4 || x >= MyGdxGame.WIDTH - 24) {
+            xSpeed = -xSpeed;
+            rotation = 180 - rotation;
+        }
+        if (y <= 20 || y >= MyGdxGame.HEIGHT - 5) {
+            rotation = 360 - rotation;
+            ySpeed = -ySpeed;
+        }
+    }
+    public void updatePosition(float delta) {
+        x += xSpeed * delta;
+        y += ySpeed * delta;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 }
