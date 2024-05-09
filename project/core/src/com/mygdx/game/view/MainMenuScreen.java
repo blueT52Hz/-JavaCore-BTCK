@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.screens.MainGameScreenTest;
 
 public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_WIDTH = 240;
