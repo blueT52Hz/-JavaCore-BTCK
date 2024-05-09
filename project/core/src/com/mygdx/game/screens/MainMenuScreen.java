@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.MyGdxGame;
 
 public class MainMenuScreen implements Screen {
@@ -43,23 +44,23 @@ public class MainMenuScreen implements Screen {
         int x = MyGdxGame.WIDTH/2 - EXIT_BUTTON_WIDTH/2;
         //System.out.println(Gdx.input.getY());
         if (Gdx.input.getX() < x + EXIT_BUTTON_WIDTH && Gdx.input.getX() > x && MyGdxGame.HEIGHT - Gdx.input.getY() < EXIT_BUTTON_Y + EXIT_BUTTON_HEIGHT && MyGdxGame.HEIGHT - Gdx.input.getY() > EXIT_BUTTON_Y ){
-            game.batch.draw(exitButtonActive, MyGdxGame.WIDTH/2 - EXIT_BUTTON_WIDTH/2, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
+            game.batch.draw(exitButtonActive, (float) MyGdxGame.WIDTH /2 - (float) EXIT_BUTTON_WIDTH /2, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
                 Gdx.app.exit();
             }
         }else{
-            game.batch.draw(exitButtonInActive, MyGdxGame.WIDTH/2 - EXIT_BUTTON_WIDTH/2, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
+            game.batch.draw(exitButtonInActive, (float) MyGdxGame.WIDTH /2 - (float) EXIT_BUTTON_WIDTH /2, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         }
         x = MyGdxGame.WIDTH/2 - PLAY_BUTTON_WIDTH/2;
 
         if (Gdx.input.getX() < x + PLAY_BUTTON_WIDTH && Gdx.input.getX() > x && MyGdxGame.HEIGHT - Gdx.input.getY() < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && MyGdxGame.HEIGHT - Gdx.input.getY() > PLAY_BUTTON_Y ){
-            game.batch.draw(playButtonActive, MyGdxGame.WIDTH/2 - PLAY_BUTTON_WIDTH/2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            game.batch.draw(playButtonActive, (float) MyGdxGame.WIDTH /2 - (float) PLAY_BUTTON_WIDTH /2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+            if (Gdx.input.justTouched()) {
                 this.dispose();
                 game.setScreen(new MainGameScreen(game));
             }
         }else{
-            game.batch.draw(playButtonInActive, MyGdxGame.WIDTH/2 - PLAY_BUTTON_WIDTH/2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+            game.batch.draw(playButtonInActive, (float) MyGdxGame.WIDTH /2 - (float) PLAY_BUTTON_WIDTH /2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
 
         }
         game.batch.end();
