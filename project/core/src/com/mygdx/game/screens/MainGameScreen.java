@@ -83,6 +83,7 @@ public class MainGameScreen implements Screen {
             ninja.update(deltaTime);
             spriteKunai.setOriginCenter();
             spriteKunai.setRotation(ninja.kunai.rotation);
+            System.out.println(ninja.kunai.rotation);
             spriteKunai.setBounds(ninja.kunai.x - 4, ninja.kunai.y - 20, Kunai.WIDTH, Kunai.HEIGHT);
             spriteKunai.draw(batch);
         }

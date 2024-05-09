@@ -23,10 +23,12 @@ public class Kunai {
     }
 
     public void updateSpeedStartFly(float MOUSE_X, float MOUSE_Y) {
-        if (MOUSE_X >= x) xSpeed = speed;
-        else xSpeed = -speed;
-        if (MOUSE_Y >= y) ySpeed = speed;
-        else ySpeed = -speed;
+//        if (MOUSE_X >= x) xSpeed = speed;
+//        else xSpeed = -speed;
+        xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
+//        if (MOUSE_Y >= y) ySpeed = speed;
+//        else ySpeed = -speed;
+        ySpeed  = speed * (float) Math.sin(Math.toRadians(rotation));
     }
     public void updateCollision() {
         if (x <= 4 || x >= MyGdxGame.WIDTH - 24) {
