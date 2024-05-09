@@ -1,99 +1,97 @@
 package com.mygdx.game.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.entities.Kunai;
+import com.mygdx.game.entities.MainCharacter;
+import com.mygdx.game.entities.NavigationArrow;
+import com.badlogic.gdx.math.MathUtils;
 
 public class MainGameScreen implements Screen {
-    public static final float SPEED = 120;
-    public static final float NINJA_WIDTH_PIXEL = 32;
-    public static final float NINJA_HEIGHT_PIXEL = 38;
-    public static float NINJA_X = 100;
-    public static float NINJA_Y = 100;
-    public static float KUNAI_X = 100;
-    public static float KUNAI_Y = 100;
-    public static final float NINJA_WIDTH = NINJA_WIDTH_PIXEL*3;
-    public static final float NINJA_HEIGHT = NINJA_HEIGHT_PIXEL*3;
-
-
-//    public static final float CHAR_ANIMATION_SPEED = 0.5f;
-//    public static final int CHAR_WIDTH_PIXEL = 17;
-//    public static final int CHAR_HEIGHT_PIXEL = 32;
-//    public static final int CHAR_WIDTH = CHAR_WIDTH_PIXEL * 3;
-//    public static final int CHAR_HEIGHT = CHAR_HEIGHT_PIXEL * 3;
-//    Animation[] rolls;
-
-    float x, y;
-    float preX, preY;
-    int roll;
-    float stateTime;
-    boolean throwed;
-    Texture img;
-    Texture kunaiImage;
-
-    Animation ninjaThrowAnimation;
+    SpriteBatch batch;
+    Texture texture;
+    Sprite sprite, spriteNinja, spriteKunai;
+    float MOUSE_X;
+    float MOUSE_Y;
+    public MainCharacter ninja;
+    float stateTime; // thời gian set cho animation
+    boolean started;// trạng thái game để set cho phần thả chuột đầu
     MyGdxGame game;
+
     public MainGameScreen(MyGdxGame game) {
         this.game = game;
-//        y = 15;
-//        x = MyGdxGame.WIDTH/2 - CHAR_WIDTH /2;
-//        roll = 2;
-//        rolls = new Animation[5];
-//        TextureRegion[][] rollSpriteSheet = TextureRegion.split(new Texture("char.png"), CHAR_WIDTH_PIXEL, CHAR_HEIGHT_PIXEL);
-//
-//        rolls[roll] = new Animation(CHAR_ANIMATION_SPEED, rollSpriteSheet[0]);
-
-
-        stateTime = 0f;
-        throwed = false;
-    }
-    @Override
-    public void show () {
-        img = new Texture("char.png");
-        kunaiImage = new Texture("kunai.png");
-        Texture[] ninjaThrowImg = new Texture[9];
-        for(int i=0;i<9;++i) {
-            ninjaThrowImg[i] = new Texture(String.format("Throw__00%d.png", i));
-        }
-        ninjaThrowAnimation = new Animation(0.05f, ninjaThrowImg);
+        ninja = new MainCharacter();
+        started = false;
     }
 
     @Override
-    public void render (float deltaTime) {
+    public void show() {
+        batch = new SpriteBatch();
+        MainCharacter.load();
+        sprite = new Sprite(MainCharacter.navigationImg);
+        spriteNinja = new Sprite(MainCharacter.waitImg);
+        spriteKunai = new Sprite(MainCharacter.kunaiImg);
+    }
+
+    @Override
+    public void render(float deltaTime) {
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
 
-        float MOUSE_X = Gdx.input.getX();
-        float MOUSE_Y = Gdx.graphics.getHeight() - Gdx.input.getY();
+        if (Gdx.input.isTouched()) {
+            started = true;
+            MOUSE_X = Gdx.input.getX();
+            MOUSE_Y = Gdx.graphics.getHeight() - Gdx.input.getY();
+            ninja.navigationArrow.update(ninja.kunai.x, ninja.kunai.y, MOUSE_X, MOUSE_Y);
+            ninja.kunai.rotation = ninja.navigationArrow.rotation;
+            sprite.setOriginCenter();
+            sprite.setRotation(ninja.navigationArrow.rotation);// set góc quay cho thanh điều hướng
+            sprite.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, NavigationArrow.WIDTH, NavigationArrow.HEIGHT);
+            sprite.draw(batch);
+            ninja.x = ninja.kunai.x;
+            ninja.y = ninja.kunai.y;
+            ninja.speed = 0;
+            ninja.kunai.xSpeed = 0;
+            ninja.kunai.ySpeed = 0;
+            ninja.kunai.speedChanged = false;
+            ninja.throwed = false;
+            ninja.update(deltaTime);
+            batch.draw((Texture) MainCharacter.glideAnimation.getKeyFrame(ninja.stateTime, true), ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
 
-        stateTime += deltaTime;
-        game.batch.begin();
+        } else if (started) {
+            if (!ninja.throwed)
+            {
+                ninja.stateTime += deltaTime;
+                batch.draw((Texture) MainCharacter.throwAnimation.getKeyFrame(ninja.stateTime, false), ninja.x - MainCharacter.WIDTH/2, ninja.y-MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+                if(ninja.stateTime >= 30 * deltaTime) {
+                    ninja.throwed = true;
+                    ninja.stateTime = 0f;
+                }
+            }else batch.draw((Texture) MainCharacter.glideAnimation.getKeyFrame(ninja.stateTime, true), ninja.x-MainCharacter.WIDTH/2, ninja.y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
 
-
-        if (Gdx.input.isTouched()){
-            NINJA_X = MOUSE_X;
-            NINJA_Y = MOUSE_Y;
-            throwed = false;
-            game.batch.draw(img, NINJA_X-NINJA_WIDTH/2, NINJA_Y - NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
-        } else {
-            game.batch.draw((Texture) ninjaThrowAnimation.getKeyFrame(stateTime, false), NINJA_X-NINJA_WIDTH/2, NINJA_Y-NINJA_HEIGHT/2, NINJA_WIDTH, NINJA_HEIGHT);
+            if (!ninja.kunai.speedChanged) {
+                ninja.kunai.speedChanged = true;
+                ninja.kunai.updateSpeedStartFly(MOUSE_X, MOUSE_Y);
+            }
+            ninja.kunai.updateCollision();
+            ninja.kunai.updatePosition(deltaTime);
+            ninja.update(deltaTime);
+            spriteKunai.setOriginCenter();
+            spriteKunai.setRotation(ninja.kunai.rotation);
+            System.out.println(ninja.kunai.rotation);
+            spriteKunai.setBounds(ninja.kunai.x - 4, ninja.kunai.y - 20, Kunai.WIDTH, Kunai.HEIGHT);
+            spriteKunai.draw(batch);
         }
-
-//        game.batch.draw(kunaiImage, 100, 100, 12, 60);
-
-//        game.batch.draw(new Texture("D:\\0000.CODE\\00. ProPTIT\\ProGameCup\\Assets\\1x\\Throw_1.png"), 100, 100, 128, 153);
-
-
-        game.batch.end();
-
+        batch.end();
     }
+
     @Override
-    public void resize (int i, int i1) {
+    public void resize(int i, int i1) {
 
     }
 
@@ -113,7 +111,8 @@ public class MainGameScreen implements Screen {
     }
 
     @Override
-    public void dispose() {
-
+    public void dispose () {
+        batch.dispose();
+        texture.dispose();
     }
 }

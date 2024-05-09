@@ -11,7 +11,6 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setWindowedMode(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
 		config.setResizable(false);
-
 		config.setTitle("JavaGameJam");
 		new Lwjgl3Application(new MyGdxGame(), config);
 	}
