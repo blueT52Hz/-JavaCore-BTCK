@@ -1,8 +1,7 @@
 package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.screens.MainGameScreen;
-import com.mygdx.game.screens.MainMenuScreen;
+import com.mygdx.game.view.MainMenuScreen;
 
 
 public class MyGdxGame extends Game {
@@ -20,4 +19,5 @@ public class MyGdxGame extends Game {
 	public void render () {
 		super.render();
 	}
+
 }

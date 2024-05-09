@@ -1,10 +1,11 @@
-package com.mygdx.game.screens;
+package com.mygdx.game.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.screens.MainGameScreenTest;
 
 public class MainMenuScreen implements Screen {
     private static final int EXIT_BUTTON_WIDTH = 240;
@@ -24,10 +25,10 @@ public class MainMenuScreen implements Screen {
     Texture exitButtonInActive;
     public MainMenuScreen(MyGdxGame game) {
         this.game = game;
-        exitButtonActive = new Texture("ExitActive.png");
-        playButtonActive = new Texture("StartActive.png");
-        exitButtonInActive = new Texture("ExitInActive.png");
-        playButtonInActive = new Texture("StartInActive.png");
+        exitButtonActive = new Texture("Button\\ExitActive.png");
+        playButtonActive = new Texture("Button\\StartActive.png");
+        exitButtonInActive = new Texture("Button\\ExitInActive.png");
+        playButtonInActive = new Texture("Button\\StartInActive.png");
     }
     @Override
     public void show() {
@@ -56,7 +57,9 @@ public class MainMenuScreen implements Screen {
             game.batch.draw(playButtonActive, MyGdxGame.WIDTH/2 - PLAY_BUTTON_WIDTH/2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
                 this.dispose();
-                game.setScreen(new MainGameScreen(game));
+//                game.setScreen(new MainGameScreen(game));
+                game.setScreen(new MainGameScreenTest(game));
+
             }
         }else{
             game.batch.draw(playButtonInActive, MyGdxGame.WIDTH/2 - PLAY_BUTTON_WIDTH/2, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);

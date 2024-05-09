@@ -36,13 +36,13 @@ public class MainCharacter {
         Texture[] throwImg = new Texture[9];
         Texture[] glideImg = new Texture[9];
         for(int i=0;i<9;++i) {
-            throwImg[i] = new Texture(String.format("Throw__00%d.png", i));
-            glideImg[i] = new Texture(String.format("Glide_00%d.png", i));
+            throwImg[i] = new Texture(String.format("MainCharacter\\Throw__00%d.png", i));
+            glideImg[i] = new Texture(String.format("MainCharacter\\Glide_00%d.png", i));
         }
         throwAnimation = new Animation<>(0.05f, throwImg);
         glideAnimation = new Animation<>(0.2f, glideImg);
 
-        waitImg = new Texture("Throw__000.png");
+        waitImg = new Texture("MainCharacter\\Throw__000.png");
         kunaiImg = new Texture("Kunai.png");
     }
 
