@@ -8,28 +8,29 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class MainCharacter {
     public static final float WIDTH_PIXEL = 32;
     public static final float HEIGHT_PIXEL = 38;
-    public static final float WIDTH = WIDTH_PIXEL*8/3;
-    public static final float HEIGHT = HEIGHT_PIXEL*8/3;
+    public static final float WIDTH = WIDTH_PIXEL*2;
+    public static final float HEIGHT = HEIGHT_PIXEL*2;
     public float x;
     public float y;
-    public float next_x;
-    public float next_y;
     public static Animation throwAnimation;
     public static Animation glideAnimation;
     public static Texture waitImg;
     public static Texture kunaiImg;
-    public float stateTime;
+    public static Texture navigationImg;
     public boolean throwed;
-    public boolean displacement;
+    public float stateTime;
     public Kunai kunai;
+    public NavigationArrow navigationArrow;
+    public float speedFall = 10; // tốc độ rơi xuống
+    public float speed;
 
     public MainCharacter() {
-        this.kunai = new Kunai();
-        this.stateTime = 0f;
-        this.throwed = true;
-        displacement = false;
-        x = 100;
-        y = 100;
+        kunai = new Kunai();
+        navigationArrow = new NavigationArrow();
+        stateTime = 0f;
+        throwed = false;
+        x = 200;
+        y = 50;
     }
 
     public static void load() {
@@ -44,12 +45,18 @@ public class MainCharacter {
 
         waitImg = new Texture("Throw__000.png");
         kunaiImg = new Texture("Kunai.png");
+        navigationImg = new Texture("Arrow2.png");
     }
 
     public void draw(SpriteBatch batch, Animation animation, boolean looping) {
         batch.draw((TextureRegion) animation.getKeyFrame(stateTime, looping), x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
     }
-    public void draw(SpriteBatch batch, Texture texture, boolean looping) {
-        batch.draw(texture, x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+    public void drawWaitImg(SpriteBatch batch) {
+        batch.draw(waitImg, x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
+    }
+    public void update (float delta) {
+        speed = -speedFall;
+        //x += speed * delta;
+        y += speed * delta;
     }
 }
