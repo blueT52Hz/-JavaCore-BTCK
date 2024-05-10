@@ -5,16 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="83263974-253d-4a7b-abe5-a63107ee2a67" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__000.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__001.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__002.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__003.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__004.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__005.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__006.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__007.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__008.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/assets/Throw__009.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/controller/HitBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/controller/HitBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/entities/Kunai.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/entities/MainCharacter.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/entities/MainCharacter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/entities/NavigationArrow.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/entities/NavigationArrow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Enemy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/impl/Medusa.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/impl/Medusa.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/impl/Ninja.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/model/impl/Ninja.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/screens/MainGameScreen.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/screens/MainMenuScreen.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/Brick.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/Brick.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/GameMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/GameMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/MainGameScreenTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/core/src/com/mygdx/game/view/MainGameScreenTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +74,7 @@
     "Gradle.JavaCore-BTCK:desktop [build].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature2.-Nhân-vật-chính",
+    "git-widget-placeholder": "demo",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/0000.CODE/00. ProPTIT/ProGameCup/BTCK/JavaCore-BTCK/project/assets",
     "node.js.detected.package.eslint": "true",
