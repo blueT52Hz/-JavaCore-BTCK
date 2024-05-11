@@ -36,4 +36,8 @@ public class GameMap {
     public LevelManager getLevelManager() {
         return levelManager;
     }
+
+    public float getStateTime() {
+        return stateTime;
+    }
 }

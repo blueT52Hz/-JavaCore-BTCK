@@ -11,7 +11,7 @@ public abstract class Enemy extends Entity{
     protected String enemyTilePath;
     protected Brick brick;
     protected int level;
-    public Enemy(int x,  int y, int level, Brick brick) {
+    public Enemy(float x,  float y, int level, Brick brick) {
         this.x = x;
         this.y = y;
         this.level = level;

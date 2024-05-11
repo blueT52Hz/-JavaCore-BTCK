@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.controller.HitBox;
 
 public abstract class Entity {
-    protected int x, y;
+    protected float x, y;
     protected int width;
     protected int height;
     protected String direction;

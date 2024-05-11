@@ -6,14 +6,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.model.Enemy;
 
 public class Brick {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
     private int width;
     private int height;
     private float xSpeed=120;
     private Enemy enemy;
     private Texture brickImage = new Texture("tiles/brick.png");
-    public Brick(int x, int y) {
+    public Brick(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -55,11 +55,11 @@ public class Brick {
         return height;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 

@@ -9,7 +9,7 @@ import com.mygdx.game.controller.HitBox;
 import com.mygdx.game.model.Enemy;
 
 public class Medusa extends Enemy {
-    public Medusa(int x, int y, int level, Brick brick) {
+    public Medusa(float x, float y, int level, Brick brick) {
         super(x, y, level, brick);
         setEnemyTilePath();
         setHeight(level);
@@ -19,9 +19,7 @@ public class Medusa extends Enemy {
     }
 
     @Override
-    protected void setEnemyTilePath() {
-
-    }
+    protected void setEnemyTilePath() {}
 
     @Override
     protected void setHeight(int level) {

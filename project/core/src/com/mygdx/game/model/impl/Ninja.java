@@ -7,7 +7,6 @@ import com.mygdx.game.model.Player;
 public class Ninja extends Player {
     public Ninja() {
         super();
-
     }
 
     @Override

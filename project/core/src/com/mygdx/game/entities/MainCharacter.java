@@ -1,9 +1,13 @@
 package com.mygdx.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mygdx.game.model.PlayerState;
+import com.mygdx.game.model.impl.Kunai;
 
 public class MainCharacter {
     public static final float WIDTH_PIXEL = 32;
@@ -12,25 +16,31 @@ public class MainCharacter {
     public static final float HEIGHT = HEIGHT_PIXEL*2;
     public float x;
     public float y;
+    private int frameCounter;
+    public float width=WIDTH_PIXEL*2;
+    public float height=HEIGHT_PIXEL*2;
     public static Animation throwAnimation;
     public static Animation glideAnimation;
     public static Texture waitImg;
     public static Texture kunaiImg;
     public static Texture navigationImg;
+    public PlayerState playerState;
     public boolean throwed;
-    public float stateTime;
     public Kunai kunai;
-    public NavigationArrow navigationArrow;
+    public Sprite navigationArrow;
     public float speedFall = 10; // tốc độ rơi xuống
     public float speed;
+    public boolean displaced;
 
     public MainCharacter() {
-        kunai = new Kunai();
-        navigationArrow = new NavigationArrow();
-        stateTime = 0f;
+        this.x = 200;
+        this.y = 50;
+        this.kunai = new Kunai(x, y);
+        this.playerState = PlayerState.IDLE;
+        navigationArrow = new Sprite(new Texture("Arrow2.png"));
         throwed = false;
-        x = 200;
-        y = 50;
+        frameCounter = 0;
+        displaced = true;
     }
 
     public static void load() {
@@ -47,16 +57,33 @@ public class MainCharacter {
         kunaiImg = new Texture("Kunai.png");
         navigationImg = new Texture("Arrow2.png");
     }
-
-    public void draw(SpriteBatch batch, Animation animation, boolean looping) {
-        batch.draw((TextureRegion) animation.getKeyFrame(stateTime, looping), x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
-    }
     public void drawWaitImg(SpriteBatch batch) {
         batch.draw(waitImg, x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
     }
-    public void update (float delta) {
+    public void draw(SpriteBatch spriteBatch, float stateTime) {
+        switch (playerState) {
+            case IDLE:
+                spriteBatch.draw(waitImg, x-width/2, y-height/2, width, height);
+                break;
+            case GLIDE:
+                spriteBatch.draw((Texture) glideAnimation.getKeyFrame(stateTime, true), x-width/2, y-height/2, width, height);
+                break;
+            case THROW:
+                frameCounter++;
+                if(frameCounter>=30) {
+                    frameCounter = 0;
+                    playerState = PlayerState.GLIDE;
+                } else spriteBatch.draw((Texture) throwAnimation.getKeyFrame(stateTime, false), x-width/2, y-height/2, width, height);
+                break;
+            case FLASH:
+                break;
+            case DEAD:
+                break;
+        }
+    }
+    public void update () {
         speed = -speedFall;
         //x += speed * delta;
-        y += speed * delta;
+        y += speed * Gdx.graphics.getDeltaTime();
     }
 }
