@@ -13,14 +13,17 @@ public class MainGameScreenTest implements Screen {
     GameMap gameMap;
     public MainCharacter ninja;
     int dem=0;
+    boolean throw_to_glide;
+    boolean flash_to_glide;
     public MainGameScreenTest(MyGdxGame game) {
+        throw_to_glide = false;
+        flash_to_glide = false;
         this.game = game;
         ninja = new MainCharacter();
     }
     @Override
     public void show () {
         gameMap = new GameMap();
-
         MainCharacter.load();
     }
 
@@ -64,27 +67,46 @@ public class MainGameScreenTest implements Screen {
             ninja.navigationArrow.setRotation(ninja.kunai.rotation);
             ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
             ninja.navigationArrow.draw(game.batch);
-
-            ninja.kunai.speedChanged = false;
-
-            ninja.kunai.xSpeed = 0;
-            ninja.kunai.ySpeed = 0;
-            ninja.kunai.updateRotation();
-            ninja.speed = 0;
-            ninja.update();
-            ninja.x = ninja.kunai.x;
-            ninja.y = ninja.kunai.y;
-            // nếu đang trên mặt đất thì ninja.playerState = PlayerState.IDLE;
-            ninja.playerState = PlayerState.GLIDE;
-            ninja.draw(game.batch, gameMap.getStateTime());
-            ninja.playerState = PlayerState.THROW;
-        } else {
-            if(ninja.playerState != PlayerState.IDLE) {
-                ninja.update();
-                ninja.kunai.draw(game.batch);
-                ninja.kunai.update();
+            throw_to_glide = false;
+            flash_to_glide  = false;
+            if (dem >= 15)
+            {
+                ninja.kunai.speedChanged = false;
+                ninja.kunai.xSpeed = 0;
+                ninja.kunai.ySpeed = 0;
+                ninja.kunai.updateRotation();
+                ninja.speed = 0;
+                ninja.x = ninja.kunai.x;
+                ninja.y = ninja.kunai.y;
+                // nếu đang trên mặt đất thì ninja.playerState = PlayerState.IDLE;
+                ninja.playerState = PlayerState.GLIDE;
+                ninja.draw(game.batch);
+                ninja.playerState = PlayerState.THROW;
+                throw_to_glide = true;
             }
-            ninja.draw(game.batch, gameMap.getStateTime());
+        } else {
+            String stateTemp = new String(ninja.playerState.getDisplayName());
+            if (dem < 15 && dem > 10)
+            {
+                ninja.x = ninja.kunai.x;
+                ninja.y = ninja.kunai.y;
+                ninja.playerState = PlayerState.FLASH;
+                flash_to_glide = true;
+            }
+            if (flash_to_glide) {
+                ninja.update();
+                ninja.kunai.x = ninja.x;
+                ninja.kunai.y = ninja.y;
+            }
+            if (throw_to_glide) {
+                if(ninja.playerState != PlayerState.IDLE && ninja.playerState != PlayerState.FLASH) {
+                    ninja.update();
+                    ninja.kunai.draw(game.batch);
+                    ninja.kunai.update();
+                }
+            }
+            if (ninja.playerState.getDisplayName()!=stateTemp) dem = 0;
+            ninja.draw(game.batch);
         }
 
         game.batch.end();

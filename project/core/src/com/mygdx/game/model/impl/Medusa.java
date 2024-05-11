@@ -51,7 +51,7 @@ public class Medusa extends Enemy {
         if(this.x>=this.brick.getX()+this.brick.getWidth()-this.width) {
             x = this.brick.getX()+this.brick.getWidth()-this.width;
             speed = -speed;
-            System.out.println(x);
+//            System.out.println(x);
         }
     }
 
