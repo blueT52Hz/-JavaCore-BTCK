@@ -55,9 +55,9 @@ public class MainCharacter {
             flashImg[i] = new Texture(String.format("Lightning_%02d.png", i + 1));
         }
         for (int i = 10;  i<= 13; i++) flashImg[i] = new Texture(String.format("Lightning_%d.png", i+1));
-        throwAnimation = new Animation<>(0.01f, throwImg);
-        glideAnimation = new Animation<>(0.2f, glideImg);
-        flashAnimation = new Animation<>(0.3f, flashImg);
+        throwAnimation = new Animation<>(0.05f, throwImg);
+        glideAnimation = new Animation<>(0.1f, glideImg);
+        flashAnimation = new Animation<>(0.025f, flashImg);
 
         waitImg = new Texture("Throw__000.png");
         kunaiImg = new Texture("Kunai.png");
@@ -66,17 +66,14 @@ public class MainCharacter {
     public void drawWaitImg(SpriteBatch batch) {
         batch.draw(waitImg, x-MainCharacter.WIDTH/2, y - MainCharacter.HEIGHT/2, MainCharacter.WIDTH, MainCharacter.HEIGHT);
     }
-    public void draw(SpriteBatch spriteBatch) {
+    public void draw(SpriteBatch spriteBatch, float gameMapStateTime) {
         switch (playerState) {
             case IDLE:
                 spriteBatch.draw(waitImg, x-width/2, y-height/2, width, height);
                 break;
             case GLIDE:
-                stateTime+=Gdx.graphics.getDeltaTime();
                 //System.out.println(stateTime);
-                if(stateTime>=10*Gdx.graphics.getDeltaTime()) {
-                    stateTime = 0;
-                } else spriteBatch.draw((Texture) glideAnimation.getKeyFrame(stateTime, false), x-width/2, y-height/2, width, height);
+                spriteBatch.draw((Texture) glideAnimation.getKeyFrame(gameMapStateTime, true), x-width/2, y-height/2, width, height);
                 break;
             case THROW:
                 stateTime+=Gdx.graphics.getDeltaTime();
@@ -88,7 +85,7 @@ public class MainCharacter {
                 break;
             case FLASH:
                 stateTime+=Gdx.graphics.getDeltaTime();
-                if (stateTime>=50*Gdx.graphics.getDeltaTime()) {
+                if (stateTime>=30*Gdx.graphics.getDeltaTime()) {
                     frameCounter = 0;
                     playerState = PlayerState.GLIDE;
                 } else spriteBatch.draw((Texture) flashAnimation.getKeyFrame(stateTime, false), x-width/2, y-height/2, width, height);

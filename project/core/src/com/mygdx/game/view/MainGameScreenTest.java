@@ -15,6 +15,7 @@ public class MainGameScreenTest implements Screen {
     int dem=0;
     boolean throw_to_glide;
     boolean flash_to_glide;
+
     public MainGameScreenTest(MyGdxGame game) {
         throw_to_glide = false;
         flash_to_glide = false;
@@ -80,7 +81,7 @@ public class MainGameScreenTest implements Screen {
                 ninja.y = ninja.kunai.y;
                 // nếu đang trên mặt đất thì ninja.playerState = PlayerState.IDLE;
                 ninja.playerState = PlayerState.GLIDE;
-                ninja.draw(game.batch);
+                ninja.draw(game.batch, gameMap.getStateTime());
                 ninja.playerState = PlayerState.THROW;
                 throw_to_glide = true;
             }
@@ -106,7 +107,7 @@ public class MainGameScreenTest implements Screen {
                 }
             }
             if (ninja.playerState.getDisplayName()!=stateTemp) dem = 0;
-            ninja.draw(game.batch);
+            ninja.draw(game.batch, gameMap.getStateTime());
         }
 
         game.batch.end();
