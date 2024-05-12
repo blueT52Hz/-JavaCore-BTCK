@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.mygdx.game.view.GameMap;
 import com.mygdx.game.MyGdxGame;
 
 public class MainGameScreen implements Screen {
@@ -28,7 +27,7 @@ public class MainGameScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             gameMap.getLevelManager().currentLevel++;
             if(gameMap.getLevelManager().currentLevel>gameMap.getLevelManager().maxLevel) {
-                gameMap.getLevelManager().spawnBrick();
+                gameMap.getLevelManager().spawnNormalLevel();
                 gameMap.getLevelManager().spawnEnemy();
                 gameMap.getLevelManager().maxLevel++;
             }

@@ -1,4 +1,4 @@
-package com.mygdx.game.model.impl;
+package com.mygdx.game.model.impl.Enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,33 +12,27 @@ public class Medusa extends Enemy {
     public Medusa(float x, float y, int level, Brick brick) {
         super(x, y, level, brick);
         setEnemyTilePath();
-        setHeight(level);
-        setWidth(level);
+        setHeight(level*40);
+        setWidth(level*40);
         loadAnimation();
         this.speed = 10 + this.brick.getxSpeed();
     }
 
     @Override
     protected void setEnemyTilePath() {}
-
-    @Override
-    protected void setHeight(int level) {
-        this.height = 40*level;
-    }
-
-    @Override
-    protected void setWidth(int level) {
-        this.width = 40*level;
-    }
     @Override
     public HitBox getHitBox() {
         return new HitBox(this.x, this.y, this.width, this.height);
     }
     @Override
-    public void draw(SpriteBatch spriteBatch, float stateTime) {
+    public void draw(SpriteBatch spriteBatch, float gameMapStateTime) {
         update();
-        if(this.speed>0) spriteBatch.draw((Texture) moveRightAnimation.getKeyFrame(stateTime, true), x, y, this.width, this.height);
-        if (this.speed<=0) spriteBatch.draw((Texture) moveLeftAnimation.getKeyFrame(stateTime, true), x, y, this.width, this.height);
+        switch (enemyState) {
+            case MOVE:
+                if(this.speed>0) spriteBatch.draw((Texture) moveRightAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
+                if (this.speed<=0) spriteBatch.draw((Texture) moveLeftAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
+        }
+
     }
 
     @Override
@@ -51,7 +45,6 @@ public class Medusa extends Enemy {
         if(this.x>=this.brick.getX()+this.brick.getWidth()-this.width) {
             x = this.brick.getX()+this.brick.getWidth()-this.width;
             speed = -speed;
-//            System.out.println(x);
         }
     }
 
