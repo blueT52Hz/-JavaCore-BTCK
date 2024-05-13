@@ -7,12 +7,22 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.model.Bullet;
 
 public class Kunai extends Bullet {
+    public boolean appear;
     public Kunai(float x, float y) {
         super(new Texture("Kunai.png"), x, y);
         this.width=40;
         this.height=8;
         this.speed = 200;
-        this.speedChanged = false;
+        this.appear = false;
+    }
+
+    public void setAppear(boolean appear) {
+        this.appear = appear;
+    }
+
+    public void change() {
+        this.appear = !this.appear;
+        return;
     }
 
     @Override
@@ -38,12 +48,8 @@ public class Kunai extends Bullet {
     public void update() {
         setBounds(x-4, y-20, width, height);
 
-        // kiểm tra xem đã cập nhật vận tốc trục x, y theo góc xoay hay chưa
-        if(!speedChanged) {
-            speedChanged = true;
-            xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
-            ySpeed  = speed * (float) Math.sin(Math.toRadians(rotation));
-        }
+        xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
+        ySpeed  = speed * (float) Math.sin(Math.toRadians(rotation));
 
         x += xSpeed * Gdx.graphics.getDeltaTime();
         y += ySpeed * Gdx.graphics.getDeltaTime();

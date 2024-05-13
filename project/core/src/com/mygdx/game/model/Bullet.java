@@ -10,9 +10,8 @@ public abstract class Bullet extends Sprite {
     public float speed;
     public float xSpeed;
     public float ySpeed;
-    public boolean speedChanged;
-    protected int width=40;
-    protected int height=8;
+    protected int width;
+    protected int height;
     protected boolean canBounce=false;
     public float rotation;
     public Bullet(Texture texture, float x, float y) {
@@ -22,8 +21,4 @@ public abstract class Bullet extends Sprite {
     }
     protected abstract void update();
     protected abstract void updateRotation(float xWeapon, float yWeapon);
-
-
-
-
 }

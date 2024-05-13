@@ -4,18 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.model.constant.EnemyState;
+import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.view.Brick;
 import com.mygdx.game.controller.HitBox;
 import com.mygdx.game.model.Enemy;
 
 public class Medusa extends Enemy {
+    private Flame flame;
+    private long lastTimeAttack;
     public Medusa(float x, float y, int level, Brick brick) {
         super(x, y, level, brick);
         setEnemyTilePath();
         setHeight(level*40);
         setWidth(level*40);
         loadAnimation();
+        this.lastTimeAttack = 0;
+        this.enemyState = EnemyState.MOVE;
         this.speed = 10 + this.brick.getxSpeed();
+        this.flame = new Flame(x, y);
+        this.flame.updateRotation(200, 50);
+        this.flame.update();
     }
 
     @Override
@@ -27,8 +36,11 @@ public class Medusa extends Enemy {
     @Override
     public void draw(SpriteBatch spriteBatch, float gameMapStateTime) {
         update();
+        this.flame.update();
+        this.flame.draw(spriteBatch);
         switch (enemyState) {
             case MOVE:
+                flame.draw(spriteBatch);
                 if(this.speed>0) spriteBatch.draw((Texture) moveRightAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
                 if (this.speed<=0) spriteBatch.draw((Texture) moveLeftAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
         }

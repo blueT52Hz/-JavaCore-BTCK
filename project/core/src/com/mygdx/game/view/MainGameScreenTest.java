@@ -4,25 +4,29 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.mygdx.game.controller.MouseHandler;
 import com.mygdx.game.entities.MainCharacter;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.model.constant.PlayerState;
+import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.model.impl.Player.Ninja;
 
 public class MainGameScreenTest implements Screen {
     MyGdxGame game;
     GameMap gameMap;
     public Ninja ninja;
+    public MouseHandler mouseHandler;
     int dem=0;
     public MainGameScreenTest(MyGdxGame game) {
         this.game = game;
         ninja = new Ninja();
+        mouseHandler = new MouseHandler();
     }
     @Override
     public void show () {
         gameMap = new GameMap();
-
         MainCharacter.load();
+        Gdx.input.setInputProcessor(mouseHandler);
     }
 
     @Override
@@ -48,29 +52,49 @@ public class MainGameScreenTest implements Screen {
             System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
         }
 
-        if (Gdx.input.isTouched()) {
-            dem++;
-//            System.out.println(dem);
-            // nếu đã dịch chuyển -> vẽ thanh định hướng
-//            if(ninja.displaced && dem >= 10) {
-//                ninja.navigationArrow.setOriginCenter();
-//                ninja.navigationArrow.setRotation(ninja.kunai.rotation);
-//                ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
-//                ninja.navigationArrow.draw(game.batch);
-//                ninja.kunai.speedChanged = false;
-//            } else if(!ninja.displaced){
+//        if(mouseHandler.isDrag()) {
+//            ninja.navigationArrow.setOriginCenter();
+//            ninja.navigationArrow.setRotation(ninja.kunai.rotation);
+//            ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
+//            ninja.navigationArrow.draw(game.batch);
+//            ninja.kunai.updateRotation();
+//            ninja.update();
+//            ninja.setPlayerState(PlayerState.GLIDE);
+//            ninja.draw(game.batch, gameMap.getStateTime());
+//            ninja.setPlayerState(PlayerState.THROW);
+//            mouseHandler.setDrag(false);
+//        }
 //
-//            }
+//        if(mouseHandler.isTouch()) {
+//            ninja.kunai.xSpeed = 0;
+//            ninja.kunai.ySpeed = 0;
+//            ninja.setX(ninja.kunai.x);
+//            ninja.setY(ninja.kunai.y);
+//            ninja.setPlayerState(PlayerState.FLASH);
+//            ninja.draw(game.batch, gameMap.getStateTime());
+//            ninja.setPlayerState(PlayerState.GLIDE);
+//            mouseHandler.setTouch(false);
+//        }
+
+
+
+        if (Gdx.input.isTouched()) {
+
             ninja.navigationArrow.setOriginCenter();
             ninja.navigationArrow.setRotation(ninja.kunai.rotation);
             ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
             ninja.navigationArrow.draw(game.batch);
 
-            ninja.kunai.speedChanged = false;
+//            ninja.kunai.stateTime = 0;
+//            flameTest.stateTime = 0;
+
 
             ninja.kunai.xSpeed = 0;
             ninja.kunai.ySpeed = 0;
+
             ninja.kunai.updateRotation();
+//            flameTest.updateRotation(50, 50);
+
             ninja.update();
             ninja.setX(ninja.kunai.x);
             ninja.setY(ninja.kunai.y);
@@ -81,11 +105,14 @@ public class MainGameScreenTest implements Screen {
         } else {
             if(ninja.getPlayerState() != PlayerState.IDLE) {
                 ninja.update();
-                ninja.kunai.draw(game.batch);
                 ninja.kunai.update();
+//                flameTest.update();
+
+                ninja.kunai.draw(game.batch);
             }
             ninja.draw(game.batch, gameMap.getStateTime());
         }
+
 
         game.batch.end();
     }

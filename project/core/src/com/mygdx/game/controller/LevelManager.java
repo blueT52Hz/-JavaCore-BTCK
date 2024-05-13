@@ -42,7 +42,7 @@ public class LevelManager {
         tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 21, 16));
         tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 10, 16));
         for (Brick brick : tmp) {
-            tmp1.add(new Demon(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 1, brick));
+            tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 1, brick));
         }
         enemies.add(tmp1);
         bricks.add(tmp);
