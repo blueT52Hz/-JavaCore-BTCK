@@ -49,22 +49,12 @@ public class Flame extends Bullet {
     @Override
     public void update() {
         setBounds(x-4, y-20, width, height);
-
-        // kiểm tra xem đã cập nhật vận tốc trục x, y theo góc xoay hay chưa
-//        if(!speedChanged) {
-////            speedChanged = true;
-//            xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
-//            ySpeed  = speed * (float) Math.sin(Math.toRadians(rotation));
-//        }
-
         xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
         ySpeed = speed * (float) Math.sin(Math.toRadians(rotation));
 
         x += xSpeed * Gdx.graphics.getDeltaTime();
         y += ySpeed * Gdx.graphics.getDeltaTime();
 
-        // xử lí collision đập vào viền màn hình
-        // cần tạo 1 hàm riêng kiểm tra collision với các vật thế khác
         if (x < 20) {
             x = 20;
             xSpeed = -xSpeed;

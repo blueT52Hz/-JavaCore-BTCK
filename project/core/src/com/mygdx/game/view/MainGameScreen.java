@@ -32,6 +32,20 @@ public class MainGameScreen implements Screen {
         game.batch.begin();
         gameMap.draw(game.batch);
 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            gameMap.getLevelManager().currentLevel++;
+            if(gameMap.getLevelManager().currentLevel>gameMap.getLevelManager().maxLevel) {
+                if(gameMap.getLevelManager().currentLevel%10!=0) gameMap.getLevelManager().spawnNormalLevel();
+                else gameMap.getLevelManager().spawnHardLevel();
+                gameMap.getLevelManager().maxLevel++;
+            }
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            gameMap.getLevelManager().currentLevel--;
+            if(gameMap.getLevelManager().currentLevel<0) gameMap.getLevelManager().currentLevel=0;
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
 
         if(mouseHandler.isDrag()) {
             ninja.navigationArrow.setOriginCenter();

@@ -19,7 +19,5 @@ public abstract class Enemy extends Entity{
         this.brick = brick;
     }
 
-    protected abstract void setEnemyTilePath();
-
 
 }

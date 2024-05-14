@@ -11,17 +11,12 @@ import com.mygdx.game.model.Enemy;
 public class Demon extends Enemy {
     public Demon(float x, float y, int level, Brick brick) {
         super(x, y, level, brick);
-        setEnemyTilePath();
         setHeight(level*50);
         setWidth(level*50);
         loadAnimation();
         this.stateTime = 0;
         this.speed = 10f + this.brick.getxSpeed();
     }
-
-    @Override
-    protected void setEnemyTilePath() {}
-
 
     @Override
     public HitBox getHitBox() {

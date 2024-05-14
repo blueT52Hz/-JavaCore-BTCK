@@ -51,7 +51,7 @@ public class LevelManager {
     public void spawnHardLevel() {
         ArrayList<Brick> tmp = new ArrayList<>();
         ArrayList<Enemy> tmp1 = new ArrayList<>();
-        tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 15, 20));
+        tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(15)+1, 15, 25));
         for (Brick brick : tmp) tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 2, brick));
         enemies.add(tmp1);
         bricks.add(tmp);

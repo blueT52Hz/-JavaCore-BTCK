@@ -10,7 +10,7 @@ public class Brick {
     private float y;
     private int width;
     private int height;
-    private float xSpeed=80;
+    private float xSpeed=50;
     private Enemy enemy;
     private Texture brickImage = new Texture("tiles/brick.png");
     public Brick(float x, float y) {
@@ -24,7 +24,7 @@ public class Brick {
         setHeight(pixel*1);
     }
     public void draw(SpriteBatch spriteBatch) {
-        update();
+//        update();
         spriteBatch.draw(brickImage, x, y, width, height);
     }
     public void update() {

@@ -15,9 +15,8 @@ public class Medusa extends Enemy {
     private long lastTimeAttack;
     public Medusa(float x, float y, int level, Brick brick) {
         super(x, y, level, brick);
-        setEnemyTilePath();
-        setHeight(level*40);
-        setWidth(level*40);
+        setHeight(level*50);
+        setWidth(level*50);
         loadAnimation();
         this.lastTimeAttack = 0;
         this.enemyState = EnemyState.MOVE;
@@ -28,21 +27,19 @@ public class Medusa extends Enemy {
     }
 
     @Override
-    protected void setEnemyTilePath() {}
-    @Override
     public HitBox getHitBox() {
         return new HitBox(this.x, this.y, this.width, this.height);
     }
     @Override
     public void draw(SpriteBatch spriteBatch, float gameMapStateTime) {
         update();
-        this.flame.update();
-        this.flame.draw(spriteBatch);
         switch (enemyState) {
             case MOVE:
-                flame.draw(spriteBatch);
                 if(this.speed>0) spriteBatch.draw((Texture) moveRightAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
                 if (this.speed<=0) spriteBatch.draw((Texture) moveLeftAnimation.getKeyFrame(gameMapStateTime, true), x, y, this.width, this.height);
+                break;
+            case ATTACK:
+
         }
 
     }

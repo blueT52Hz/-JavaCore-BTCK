@@ -61,7 +61,7 @@ public class MouseHandler implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         waitTimer += Gdx.graphics.getDeltaTime();
-        if(waitTimer < 3* Gdx.graphics.getDeltaTime()) return false;
+        if(waitTimer < 3 * Gdx.graphics.getDeltaTime()) return false;
         this.drag = true;
         this.touchDown = false;
         System.out.println("Giữ chuột");
