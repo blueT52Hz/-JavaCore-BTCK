@@ -30,17 +30,19 @@ public class GameMap extends Matrix4 {
         drawEnemies(spriteBatch);
     }
     public void drawBricks(SpriteBatch spriteBatch) {
-//        for(int i=0;i<3;++i) {
-//            this.levelManager.bricks.get(this.levelManager.currentLevel).get(i).draw(spriteBatch);
-//        }
-        for(Brick brick : this.levelManager.bricks.get(this.levelManager.currentLevel)) {
-            brick.draw(spriteBatch);
-            for (ArrayList<Body> body : levelManager.bodies) {
-                for (Body b : body) {
-                    b.setTransform(brick.getX()/PPM, brick.getY()/PPM, 0);
-                }
-            }
+        for(int i=0;i<3;++i) {
+            Brick temp = this.levelManager.bricks.get(this.levelManager.currentLevel).get(i);
+            temp.draw(spriteBatch);
+            this.levelManager.bodies.get(this.levelManager.currentLevel).get(i).setTransform(temp.getX()/PPM + 96/2/PPM, temp.getY()/PPM + 16/2/PPM, 0);
         }
+//        for(Brick brick : this.levelManager.bricks.get(this.levelManager.currentLevel)) {
+//            brick.draw(spriteBatch);
+//            for (ArrayList<Body> body : levelManager.bodies) {
+//                for (Body b : body) {
+//                    b.
+//                }
+//            }
+//        }
     }
 
     public void drawEnemies(SpriteBatch spriteBatch) {

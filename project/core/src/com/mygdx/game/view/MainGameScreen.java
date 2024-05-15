@@ -46,7 +46,7 @@ public class MainGameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
         contactListener = new CustomContactListener();
-        world = new World(new Vector2(0, 0f), false);
+        world = new World(new Vector2(0, -1f), false);
         world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 
@@ -76,7 +76,8 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
         gameMap.draw(game.batch);
-
+        ninja.setX(ninja.body.getPosition().x * PPM);
+        ninja.setY(ninja.body.getPosition().y * PPM);
         ninja.kunai.setRotation(ninja.kunai.body.getAngle() * MathUtils.radiansToDegrees);
 
         System.out.println(ninja.kunai.body.getAngle() * MathUtils.radiansToDegrees);
@@ -89,10 +90,7 @@ public class MainGameScreen implements Screen {
             ninja.navigationArrow.setBounds(ninja.getX() - 35, ninja.getY() - 26, 100, 20);
             ninja.navigationArrow.setRotation(ninja.kunai.rotation);
             ninja.navigationArrow.draw(game.batch);
-//            ninja.setX(ninja.body.getPosition().x * PPM);
-//            ninja.setY(ninja.body.getPosition().y * PPM);
-//            ninja.kunai.x = ninja.getX();
-//            ninja.kunai.y = ninja.getY();
+            ninja.kunai.update();
             ninja.kunai.updateRotation();
             ninja.kunai.setAppear(true);
             ninja.setPlayerState(PlayerState.GLIDE);
@@ -105,22 +103,27 @@ public class MainGameScreen implements Screen {
             ninja.setX(ninja.kunai.body.getPosition().x * PPM);
             ninja.setY(ninja.kunai.body.getPosition().y * PPM);
             ninja.setPlayerState(PlayerState.FLASH);
-            //ninja.kunai.body.setLinearVelocity(0, 0);
             ninja.kunai.x = ninja.kunai.body.getPosition().x * PPM;
             ninja.kunai.y = ninja.kunai.body.getPosition().y * PPM;
         }
         if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
             if(ninja.kunai.appear) {
-                ninja.kunai.update();
                 if (contactListener.isKunaiAndDownWallContact()) {
                     ninja.kunai.ySpeed = -ninja.kunai.ySpeed;
-                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x, ninja.kunai.body.getPosition().y + 2 /PPM, 360 * MathUtils.degreesToRadians - ninja.kunai.body.getAngle() );
-//                    ninja.kunai.body.setLinearVelocity(ninja.kunai.xSpeed/PPM, ninja.kunai.ySpeed/PPM);
+                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x, ninja.kunai.body.getPosition().y + 1 / PPM, 360 * MathUtils.degreesToRadians - ninja.kunai.body.getAngle());
                     contactListener.setKunaiAndDownWallContact(false);
                 }
+                if (contactListener.isKunaiAndLeftWallContact()) {
+                    ninja.kunai.xSpeed = -ninja.kunai.xSpeed;
+                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x + 1 / PPM, ninja.kunai.body.getPosition().y, 540 * MathUtils.degreesToRadians - ninja.kunai.body.getAngle());
+                    contactListener.setKunaiAndLeftWallContact(false);
+                }
+                if (contactListener.isKunaiAndRightWallContact()) {
+                    ninja.kunai.xSpeed = -ninja.kunai.xSpeed;
+                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x - 1 / PPM, ninja.kunai.body.getPosition().y, 540 * MathUtils.degreesToRadians - ninja.kunai.body.getAngle() );
+                    contactListener.setKunaiAndRightWallContact(false);
+                }
                 ninja.kunai.body.setLinearVelocity(ninja.kunai.xSpeed/PPM, ninja.kunai.ySpeed/PPM);
-                //ninja.kunai.update();
-                //ninja.kunai.draw(game.batch);
             }else {
                 ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
                 ninja.kunai.x = ninja.kunai.body.getPosition().x;
@@ -132,10 +135,10 @@ public class MainGameScreen implements Screen {
             }
             else ninja.setPlayerState(PlayerState.THROW);
         }
-//        ninja.update();
-//        ninja.body.setTransform(ninja.getX()/PPM, ninja.getY()/PPM, 0);
-//        ninja.kunai.body.setTransform(ninja.kunai.x/PPM, ninja.kunai.y/PPM, 0);
-
+        if (contactListener.isninjaAndDownWallContact()){
+            ninja.setPlayerState(PlayerState.IDLE);
+            contactListener.setninjaAndDownWallContact(false);
+        }
         ninja.draw(game.batch, gameMap.getStateTime());
 
         game.batch.end();
@@ -175,28 +178,9 @@ public class MainGameScreen implements Screen {
         camera.position.set(position);
         camera.update();
     }
-    public void inputUpdate(float delta) {
-        int horizontalForce = 0;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-            horizontalForce --;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            horizontalForce ++;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            System.out.println(1);
-            ninja.body.applyForceToCenter(0, 300, false);
-        }
-        ninja.body.setLinearVelocity(horizontalForce * 5, ninja.body.getLinearVelocity().y);
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-//            player.applyForceToCenter(0, -10, false);
-//        }
-//        player.setLinearVelocity(0, ninja.getySpeed());
-    }
 
     public void update(float delta) {
         world.step(1 / 60f, 6, 2);
-        inputUpdate(delta);
         cameraUpdate(delta);
         game.batch.setProjectionMatrix(camera.combined);
     }
