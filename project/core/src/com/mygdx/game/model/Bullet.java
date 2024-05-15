@@ -3,6 +3,12 @@ package com.mygdx.game.model;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+
+import static com.mygdx.game.model.constant.Constants.PPM;
 
 public abstract class Bullet extends Sprite {
     public float x;
@@ -10,9 +16,9 @@ public abstract class Bullet extends Sprite {
     public float speed;
     public float xSpeed;
     public float ySpeed;
-    public boolean speedChanged;
-    protected int width=40;
-    protected int height=8;
+    protected int width;
+    protected int height;
+    public Body body;
     protected boolean canBounce=false;
     public float rotation;
     public Bullet(Texture texture, float x, float y) {
@@ -22,8 +28,4 @@ public abstract class Bullet extends Sprite {
     }
     protected abstract void update();
     protected abstract void updateRotation(float xWeapon, float yWeapon);
-
-
-
-
 }
