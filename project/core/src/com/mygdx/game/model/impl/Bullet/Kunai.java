@@ -51,8 +51,8 @@ public class Kunai extends Bullet {
         xSpeed = speed *  (float) Math.cos(Math.toRadians(rotation));
         ySpeed = speed * (float) Math.sin(Math.toRadians(rotation));
 
-        x += xSpeed * Gdx.graphics.getDeltaTime();
-        y += ySpeed * Gdx.graphics.getDeltaTime();
+//        x += xSpeed * Gdx.graphics.getDeltaTime();
+//        y += ySpeed * Gdx.graphics.getDeltaTime();
 
         // xử lí collision đập vào viền màn hình
         // cần tạo 1 hàm riêng kiểm tra collision với các vật thế khác

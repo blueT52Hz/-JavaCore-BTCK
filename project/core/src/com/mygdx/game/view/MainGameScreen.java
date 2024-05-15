@@ -79,18 +79,18 @@ public class MainGameScreen implements Screen {
 
         ninja.kunai.setRotation(ninja.kunai.body.getAngle() * MathUtils.radiansToDegrees);
 
-        System.out.println(ninja.kunai.getRotation());
-        ninja.kunai.setBounds(ninja.kunai.body.getPosition().x * PPM -20,ninja.kunai.body.getPosition().y * PPM - 4, 40 , 8);
+        System.out.println(ninja.kunai.body.getAngle() * MathUtils.radiansToDegrees);
+        ninja.kunai.setBounds(ninja.kunai.body.getPosition().x * PPM - 20,ninja.kunai.body.getPosition().y * PPM - 4, 40 , 8);
         if (ninja.kunai.appear) ninja.kunai.draw(game.batch);
         if(mouseHandler.isDrag()) {
             ninja.body.setTransform(ninja.getX() / PPM, ninja.getY() / PPM, 0);
-            //ninja.kunai.body.setTransform(ninja.body.getPosition(), ninja.kunai.rotation * MathUtils.degreesToRadians);
+            ninja.kunai.body.setTransform(ninja.body.getPosition(), ninja.kunai.rotation * MathUtils.degreesToRadians);
             ninja.navigationArrow.setOriginCenter();
             ninja.navigationArrow.setBounds(ninja.getX() - 35, ninja.getY() - 26, 100, 20);
             ninja.navigationArrow.setRotation(ninja.kunai.rotation);
             ninja.navigationArrow.draw(game.batch);
-            ninja.setX(ninja.body.getPosition().x * PPM);
-            ninja.setY(ninja.body.getPosition().y * PPM);
+//            ninja.setX(ninja.body.getPosition().x * PPM);
+//            ninja.setY(ninja.body.getPosition().y * PPM);
 //            ninja.kunai.x = ninja.getX();
 //            ninja.kunai.y = ninja.getY();
             ninja.kunai.updateRotation();
@@ -100,29 +100,29 @@ public class MainGameScreen implements Screen {
         }
 
         if(mouseHandler.isTouchDown()) {
-            ninja.kunai.xSpeed = 0;
-            ninja.kunai.ySpeed = 0;
             ninja.kunai.setAppear(false);
             ninja.body.setTransform(ninja.kunai.body.getPosition(), 0);
             ninja.setX(ninja.kunai.body.getPosition().x * PPM);
             ninja.setY(ninja.kunai.body.getPosition().y * PPM);
             ninja.setPlayerState(PlayerState.FLASH);
-            ninja.kunai.body.setLinearVelocity(0, 0);
+            //ninja.kunai.body.setLinearVelocity(0, 0);
             ninja.kunai.x = ninja.kunai.body.getPosition().x * PPM;
             ninja.kunai.y = ninja.kunai.body.getPosition().y * PPM;
         }
         if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
             if(ninja.kunai.appear) {
                 ninja.kunai.update();
-                //ninja.kunai.body.setLinearVelocity(ninja.kunai.xSpeed/PPM, ninja.kunai.ySpeed/PPM);
-                ninja.kunai.body.setTransform(ninja.kunai.body.getPosition(), ninja.kunai.rotation * MathUtils.degreesToRadians);
                 if (contactListener.isKunaiAndDownWallContact()) {
-                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x, ninja.kunai.body.getPosition().y, 2 * ninja.kunai.body.getAngle() - 360);
-                    ninja.kunai.body.setLinearVelocity(ninja.kunai.body.getLinearVelocity().x, -ninja.kunai.body.getLinearVelocity().y);
+                    ninja.kunai.ySpeed = -ninja.kunai.ySpeed;
+                    ninja.kunai.body.setTransform(ninja.kunai.body.getPosition().x, ninja.kunai.body.getPosition().y + 2 /PPM, 360 * MathUtils.degreesToRadians - ninja.kunai.body.getAngle() );
+//                    ninja.kunai.body.setLinearVelocity(ninja.kunai.xSpeed/PPM, ninja.kunai.ySpeed/PPM);
+                    contactListener.setKunaiAndDownWallContact(false);
                 }
+                ninja.kunai.body.setLinearVelocity(ninja.kunai.xSpeed/PPM, ninja.kunai.ySpeed/PPM);
                 //ninja.kunai.update();
                 //ninja.kunai.draw(game.batch);
             }else {
+                ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
                 ninja.kunai.x = ninja.kunai.body.getPosition().x;
                 ninja.kunai.y = ninja.kunai.body.getPosition().y;
             }
