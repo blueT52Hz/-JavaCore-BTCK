@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.mygdx.game.MyGdxGame;
 
 import java.io.BufferedReader;
@@ -33,7 +34,15 @@ public class HighscoreScreen implements Screen {
 
     public HighscoreScreen(MyGdxGame game) {
         this.game = game;
-        font = new BitmapFont(Gdx.files.internal("highscorefont.fnt"));
+
+        // Generate BitmapFont from OTF file
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24; // Set the desired size
+        parameter.color = Color.WHITE; // Set the desired color
+        font = generator.generateFont(parameter);
+        generator.dispose(); // Don't forget to dispose to avoid memory leaks
+
         highscoreTexture = new Texture("Button/HighscoreActive.PNG");
         backButtonActive = new Texture("Button/BackActive.PNG");
         backButtonInActive = new Texture("Button/BackInactive.PNG");
@@ -54,20 +63,24 @@ public class HighscoreScreen implements Screen {
         // Draw the highscore image
         game.batch.draw(highscoreTexture, MyGdxGame.WIDTH / 2 - 120, 550, 240, 60);
         game.batch.draw(tablehighscoreTexture, MyGdxGame.WIDTH / 2 - 180, 150, 360, 370);
+
         // Load high scores from file
         List<PlayerScore> playerScores = loadHighScores();
 
         // Sort high scores by score (descending)
         Collections.sort(playerScores, Comparator.comparingInt(PlayerScore::getScore).reversed());
 
-        font.setColor(Color.CYAN);
-        // Display high scores as table
+        // Set font color for headers
+        font.setColor(Color.YELLOW);
         font.draw(game.batch, "STT", 40, 500);
         font.draw(game.batch, "Name", 100, 500);
         font.draw(game.batch, "Lv", 250, 500);
         font.draw(game.batch, "Score", 300, 500);
+
         int y = 450;
         int stt = 1;
+
+        // Set font color for high scores
         font.setColor(Color.WHITE);
         for (PlayerScore playerScore : playerScores.subList(0, Math.min(playerScores.size(), 10))) {
             font.draw(game.batch, String.valueOf(stt), 50, y);
@@ -115,7 +128,6 @@ public class HighscoreScreen implements Screen {
         highscoreTexture.dispose();
         backButtonActive.dispose();
         backButtonInActive.dispose();
-        font.dispose();
     }
 
     private List<PlayerScore> loadHighScores() {
