@@ -32,15 +32,27 @@ public class HighscoreScreen implements Screen {
     private Texture highscoreTexture;
     private Texture tablehighscoreTexture;
 
+    // Khai báo font cho dòng tiêu đề và player
+    private BitmapFont headerFont;
+    private BitmapFont playerFont;
+
     public HighscoreScreen(MyGdxGame game) {
         this.game = game;
 
         // Generate BitmapFont from OTF file
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 24; // Set the desired size
-        parameter.color = Color.WHITE; // Set the desired color
-        font = generator.generateFont(parameter);
+
+        // Thiết lập kích thước cho dòng tiêu đề là 24
+        parameter.size = 24;
+        parameter.color = Color.YELLOW; // Màu vàng cho dòng tiêu đề
+        headerFont = generator.generateFont(parameter);
+
+        // Thiết lập kích thước cho dòng player là 19
+        parameter.size = 19;
+        parameter.color = Color.WHITE; // Màu trắng cho dòng player
+        playerFont = generator.generateFont(parameter);
+
         generator.dispose(); // Don't forget to dispose to avoid memory leaks
 
         highscoreTexture = new Texture("Button/HighscoreActive.PNG");
@@ -69,24 +81,24 @@ public class HighscoreScreen implements Screen {
 
         // Sort high scores by score (descending)
         Collections.sort(playerScores, Comparator.comparingInt(PlayerScore::getScore).reversed());
-
+        int y = 490;
         // Set font color for headers
-        font.setColor(Color.YELLOW);
-        font.draw(game.batch, "STT", 40, 500);
-        font.draw(game.batch, "Name", 100, 500);
-        font.draw(game.batch, "Lv", 250, 500);
-        font.draw(game.batch, "Score", 300, 500);
+        headerFont.setColor(Color.YELLOW);
+        headerFont.draw(game.batch, "Rank", 30, y);
+        headerFont.draw(game.batch, "Name", 100, y);
+        headerFont.draw(game.batch, "Lv", 250, y);
+        headerFont.draw(game.batch, "Score", 300, y);
 
-        int y = 450;
+
+        y = 450;
         int stt = 1;
-
-        // Set font color for high scores
-        font.setColor(Color.WHITE);
+        
+        playerFont.setColor(Color.WHITE);
         for (PlayerScore playerScore : playerScores.subList(0, Math.min(playerScores.size(), 10))) {
-            font.draw(game.batch, String.valueOf(stt), 50, y);
-            font.draw(game.batch, playerScore.getName(), 100, y);
-            font.draw(game.batch, String.valueOf(playerScore.getLevel()), 250, y);
-            font.draw(game.batch, String.valueOf(playerScore.getScore()), 300, y);
+            playerFont.draw(game.batch, String.valueOf(stt), 50, y);
+            playerFont.draw(game.batch, playerScore.getName(), 100, y);
+            playerFont.draw(game.batch, String.valueOf(playerScore.getLevel()), 250, y);
+            playerFont.draw(game.batch, String.valueOf(playerScore.getScore()), 300, y);
             y -= 30;
             stt++;
         }
