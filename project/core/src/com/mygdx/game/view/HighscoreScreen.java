@@ -1,0 +1,163 @@
+package com.mygdx.game.view;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.MyGdxGame;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class HighscoreScreen implements Screen {
+    private static final int BACK_BUTTON_WIDTH = 100;
+    private static final int BACK_BUTTON_HEIGHT = 50;
+    private static final int BACK_BUTTON_Y = 30;
+
+    private MyGdxGame game;
+    private BitmapFont font;
+
+    private Texture backButtonActive;
+    private Texture backButtonInActive;
+
+    private Texture highscoreTexture;
+    private Texture tablehighscoreTexture;
+
+    public HighscoreScreen(MyGdxGame game) {
+        this.game = game;
+        font = new BitmapFont(Gdx.files.internal("highscorefont.fnt"));
+        highscoreTexture = new Texture("Button/HighscoreActive.PNG");
+        backButtonActive = new Texture("Button/BackActive.PNG");
+        backButtonInActive = new Texture("Button/BackInactive.PNG");
+        tablehighscoreTexture = new Texture("Button/TableHighscore.PNG");
+    }
+
+    @Override
+    public void show() {
+        // Initialize resources in show method
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        game.batch.begin();
+        // Draw the highscore image
+        game.batch.draw(highscoreTexture, MyGdxGame.WIDTH / 2 - 120, 550, 240, 60);
+        game.batch.draw(tablehighscoreTexture, MyGdxGame.WIDTH / 2 - 180, 150, 360, 370);
+        // Load high scores from file
+        List<PlayerScore> playerScores = loadHighScores();
+
+        // Sort high scores by score (descending)
+        Collections.sort(playerScores, Comparator.comparingInt(PlayerScore::getScore).reversed());
+
+        font.setColor(Color.CYAN);
+        // Display high scores as table
+        font.draw(game.batch, "STT", 40, 500);
+        font.draw(game.batch, "Name", 100, 500);
+        font.draw(game.batch, "Lv", 250, 500);
+        font.draw(game.batch, "Score", 300, 500);
+        int y = 450;
+        int stt = 1;
+        font.setColor(Color.WHITE);
+        for (PlayerScore playerScore : playerScores.subList(0, Math.min(playerScores.size(), 10))) {
+            font.draw(game.batch, String.valueOf(stt), 50, y);
+            font.draw(game.batch, playerScore.getName(), 100, y);
+            font.draw(game.batch, String.valueOf(playerScore.getLevel()), 250, y);
+            font.draw(game.batch, String.valueOf(playerScore.getScore()), 300, y);
+            y -= 30;
+            stt++;
+        }
+
+        int x = MyGdxGame.WIDTH / 2 - BACK_BUTTON_WIDTH / 2;
+        if (Gdx.input.getX() < x + BACK_BUTTON_WIDTH && Gdx.input.getX() > x && MyGdxGame.HEIGHT - Gdx.input.getY() < BACK_BUTTON_Y + BACK_BUTTON_HEIGHT && MyGdxGame.HEIGHT - Gdx.input.getY() > BACK_BUTTON_Y) {
+            game.batch.draw(backButtonActive, x, BACK_BUTTON_Y, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
+            if (Gdx.input.justTouched()) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        } else {
+            game.batch.draw(backButtonInActive, x, BACK_BUTTON_Y, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
+        }
+        game.batch.end();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
+        // Dispose resources when screen is hidden
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        // Dispose resources
+        font.dispose();
+        highscoreTexture.dispose();
+        backButtonActive.dispose();
+        backButtonInActive.dispose();
+        font.dispose();
+    }
+
+    private List<PlayerScore> loadHighScores() {
+        List<PlayerScore> playerScores = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader("HighScores.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\s+");
+                if (parts.length >= 3) {
+                    String name = parts[0];
+                    int level = Integer.parseInt(parts[1]);
+                    int score = Integer.parseInt(parts[2]);
+                    playerScores.add(new PlayerScore(name, level, score));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return playerScores;
+    }
+
+    private static class PlayerScore {
+        private String name;
+        private int level;
+        private int score;
+
+        public PlayerScore(String name, int level, int score) {
+            this.name = name;
+            this.level = level;
+            this.score = score;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public int getScore() {
+            return score;
+        }
+    }
+}

@@ -8,6 +8,7 @@ public class MyGdxGame extends Game {
 	public static final int WIDTH = 400;
 	public static final int HEIGHT = 720;
 	public SpriteBatch batch;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -17,6 +18,10 @@ public class MyGdxGame extends Game {
 	@Override
 	public void render () {
 		super.render();
+	}
+	@Override
+	public void dispose() {
+		batch.dispose();
 	}
 
 }

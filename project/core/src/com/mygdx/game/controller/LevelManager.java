@@ -4,8 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.model.Enemy;
-import com.mygdx.game.model.impl.Enemy.Demon;
-import com.mygdx.game.model.impl.Enemy.Medusa;
+import com.mygdx.game.model.impl.Medusa;
 import com.mygdx.game.view.Brick;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class LevelManager {
         enemies = new ArrayList<>();
         currentLevel = 0;
         maxLevel = 0;
-        spawnNormalLevel();
+        spawnBrick();
     }
     public static LevelManager getInstance() {
         if(instance==null) instance = new LevelManager();
@@ -35,7 +34,7 @@ public class LevelManager {
         if(currentLevel==0) img = startMapImage;
         spriteBatch.draw(img, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
-    public void spawnNormalLevel() {
+    public void spawnBrick() {
         ArrayList<Brick> tmp = new ArrayList<>();
         ArrayList<Enemy> tmp1 = new ArrayList<>();
         tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 31, 16));
@@ -48,22 +47,13 @@ public class LevelManager {
         bricks.add(tmp);
     }
 
-    public void spawnHardLevel() {
-        ArrayList<Brick> tmp = new ArrayList<>();
-        ArrayList<Enemy> tmp1 = new ArrayList<>();
-        tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(15)+1, 15, 25));
-        for (Brick brick : tmp) tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 2, brick));
-        enemies.add(tmp1);
-        bricks.add(tmp);
-    }
-
     public void spawnEnemy() {
     }
     public void nextLevel() {
         this.currentLevel++;
         if(this.currentLevel>this.maxLevel) {
             maxLevel = currentLevel;
-            spawnNormalLevel();
+            spawnBrick();
         }
     }
     public void preLevel() {

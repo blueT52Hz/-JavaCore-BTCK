@@ -10,7 +10,7 @@ public class Brick {
     private float y;
     private int width;
     private int height;
-    private float xSpeed=50;
+    private float xSpeed=120;
     private Enemy enemy;
     private Texture brickImage = new Texture("tiles/brick.png");
     public Brick(float x, float y) {
@@ -24,8 +24,8 @@ public class Brick {
         setHeight(pixel*1);
     }
     public void draw(SpriteBatch spriteBatch) {
-//        update();
-        spriteBatch.draw(brickImage, x, y, width, height);
+        update();
+        spriteBatch.draw(brickImage, x, y, 16*6, 16);
     }
     public void update() {
         x+=xSpeed * Gdx.graphics.getDeltaTime();
@@ -33,9 +33,9 @@ public class Brick {
             xSpeed = -xSpeed;
             x = 16;
         }
-        if(x>=Gdx.graphics.getWidth()-width-16) {
+        if(x>=Gdx.graphics.getWidth()-16*7) {
             xSpeed = -xSpeed;
-            x = Gdx.graphics.getWidth()-width-16;
+            x = Gdx.graphics.getWidth()-16*7;
         }
     }
 
