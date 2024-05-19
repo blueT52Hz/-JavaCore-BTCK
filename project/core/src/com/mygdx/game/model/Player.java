@@ -40,4 +40,10 @@ public abstract class Player extends Entity {
     public boolean isAppear() {
         return appear;
     }
+
+    @Override
+    public void createBody(){
+        super.createBody();
+        this.body.getFixtureList().first().setUserData(this);
+    }
 }
