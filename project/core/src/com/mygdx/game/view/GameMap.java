@@ -21,6 +21,7 @@ public class GameMap extends Matrix4 {
     }
     public void draw(SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime();
+        levelManager.update();
         drawBackground(spriteBatch);
         drawBricks(spriteBatch);
         drawEnemies(spriteBatch);

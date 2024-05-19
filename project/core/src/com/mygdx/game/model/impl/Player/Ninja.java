@@ -33,7 +33,7 @@ public class Ninja extends Player {
         this.kunai = new Kunai(x, y);
         this.playerState = PlayerState.IDLE;
         this.navigationArrow = new Sprite(new Texture("Arrow2.png"));
-        this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);
+        this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
 
         loadAnimation();
@@ -78,11 +78,10 @@ public class Ninja extends Player {
 
     @Override
     public void update() {
-        if(playerState == PlayerState.GLIDE) this.body.setLinearVelocity(0, -50f/PPM);
-        if(playerState == PlayerState.IDLE) this.body.setLinearVelocity(0, 0);
+        if(playerState == PlayerState.GLIDE)    this.body.setLinearVelocity(0, -50f/PPM);
+        if(playerState == PlayerState.IDLE)     this.body.setLinearVelocity(0, 0);
         x = body.getPosition().x*PPM;
         y = body.getPosition().y*PPM;
-
     }
 
     @Override

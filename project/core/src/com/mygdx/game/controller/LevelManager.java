@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.model.Enemy;
+import com.mygdx.game.model.EnemyBullet;
 import com.mygdx.game.model.Player;
 import com.mygdx.game.model.impl.Enemy.Demon;
 import com.mygdx.game.model.impl.Enemy.Medusa;
@@ -69,15 +70,35 @@ public class LevelManager {
         bricks.add(tmp);
     }
 
+    public void update() {
+        ArrayList<Enemy> enemiesRemove = new ArrayList<>();
+        ArrayList<Body> bodiesRemove = new ArrayList<>();
+        for(Enemy enemy : enemies.get(currentLevel)) {
+            if(enemy.isDead()) {
+                enemiesRemove.add(enemy);
+                bodiesRemove.add(enemy.getBody());
+                for(EnemyBullet enemyBullet : enemy.getEnemyBullets()) {
+                    bodiesRemove.add(enemyBullet.getBody());
+                }
+            }
+        }
+        enemies.get(currentLevel).removeAll(enemiesRemove);
+        for(Body body : bodiesRemove) GameMap.world.destroyBody(body);
+    }
+
     public void nextLevel() {
+        ArrayList<Enemy> enemiesRemove = new ArrayList<>();
         for(Enemy enemy : enemies.get(currentLevel)) {
             bodies.addAll(enemy.getEnemyBulletsBodies());
             bodies.add(enemy.getBody());
-            bodies.add(enemy.getBrick().getBody());
+        }
+        for (Brick brick : bricks.get(currentLevel)) {
+            bodies.add(brick.getBody());
         }
         for (Body body : bodies) {
             GameMap.world.destroyBody(body);
         }
+        enemies.get(currentLevel).removeAll(enemiesRemove);
         bodies.clear();
         this.currentLevel++;
         if(this.currentLevel>this.maxLevel) {
