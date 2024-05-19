@@ -1,4 +1,4 @@
-package com.mygdx.game.model;
+package com.mygdx.game.model.constant;
 
 public enum PlayerState {
     IDLE("IDlE"), GLIDE("GLIDE"), THROW("THROW"), DEAD("DEAD"), FLASH("FLASH");
