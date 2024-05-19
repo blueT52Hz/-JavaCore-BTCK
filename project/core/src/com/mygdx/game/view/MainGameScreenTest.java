@@ -126,7 +126,7 @@ public class MainGameScreenTest implements Screen {
 
         game.batch.end();
 
-        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+//        b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
     @Override
     public void resize (int width, int height) {
