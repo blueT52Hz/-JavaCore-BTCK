@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import static com.mygdx.game.model.constant.Constants.PPM;
 
 public class BoxManager {
-    public Body createBox(float x, float y, int width, int height, boolean isStatic, World world, float friction) {
+    public static Body createBox(float x, float y, int width, int height, boolean isStatic, World world, float friction) {
         Body pBody;
         BodyDef def = new BodyDef();
         if (isStatic) def.type = BodyDef.BodyType.StaticBody;

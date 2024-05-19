@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.mygdx.game.controller.HitBox;
+import com.mygdx.game.controller.BoxManager;
 import com.mygdx.game.model.Player;
 import com.mygdx.game.model.constant.PlayerState;
-import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.model.impl.Bullet.Kunai;
+import com.mygdx.game.view.GameMap;
+import static com.mygdx.game.model.constant.Constants.PPM;
 
 public class Ninja extends Player {
     private static Animation glideAnimation;
@@ -24,24 +24,26 @@ public class Ninja extends Player {
         super();
         this.x = 200;
         this.y = 50;
-        width = 64;
-        height = 76;
-        ySpeed = -10;
-        stateTime = 0;
-        throwed = true;
+        this.width = 32*3/2;
+        this.height = 38*3/2;
+        this.ySpeed = -10;
+        this.stateTime = 0;
+        this.throwed = true;
+        this.appear = true;
         this.kunai = new Kunai(x, y);
         this.playerState = PlayerState.IDLE;
-        navigationArrow = new Sprite(new Texture("Arrow2.png"));
+        this.navigationArrow = new Sprite(new Texture("Arrow2.png"));
+        this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);
+        this.body.getFixtureList().first().setUserData(this);
+
         loadAnimation();
     }
 
-    @Override
-    public HitBox getHitBox() {
-        return null;
-    }
 
     @Override
     public void draw(SpriteBatch spriteBatch, float gameMapStateTime) {
+        if(!isAppear()) return;
+        update();
         switch (playerState) {
             case IDLE:
                 spriteBatch.draw(waitImg, x-width/2, y-height/2, width, height);
@@ -76,12 +78,11 @@ public class Ninja extends Player {
 
     @Override
     public void update() {
-        //x += speed * delta;
-        if(playerState == PlayerState.GLIDE)
-        {
-            y += ySpeed * Gdx.graphics.getDeltaTime();
-            body.setTransform(x, y, 0);
-        }
+        if(playerState == PlayerState.GLIDE) this.body.setLinearVelocity(0, -50f/PPM);
+        if(playerState == PlayerState.IDLE) this.body.setLinearVelocity(0, 0);
+        x = body.getPosition().x*PPM;
+        y = body.getPosition().y*PPM;
+
     }
 
     @Override

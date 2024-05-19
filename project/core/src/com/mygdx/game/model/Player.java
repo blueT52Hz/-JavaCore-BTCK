@@ -4,15 +4,14 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.mygdx.game.model.constant.PlayerState;
 
+import static com.mygdx.game.model.constant.Constants.PPM;
+
 public abstract class Player extends Entity {
     protected float xSpeed;
     protected float ySpeed;
     protected PlayerState playerState;
+    protected boolean appear;
     public Sprite navigationArrow;
-    private Animation glideAnimation;
-    private Animation throwAnimation;
-    private Animation idleAnimation;
-    private Animation deadAnimation;
 
     public void setxSpeed(float xSpeed) {
         this.xSpeed = xSpeed;
@@ -36,5 +35,9 @@ public abstract class Player extends Entity {
 
     public PlayerState getPlayerState() {
         return playerState;
+    }
+
+    public boolean isAppear() {
+        return appear;
     }
 }

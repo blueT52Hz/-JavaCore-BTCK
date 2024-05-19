@@ -41,7 +41,7 @@ public class MouseHandler implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         this.touchDown = true;
         this.drag = false;
-        System.out.println("Chạm");
+//        System.out.println("Chạm");
         return false;
     }
 
@@ -64,7 +64,7 @@ public class MouseHandler implements InputProcessor {
         if(waitTimer < 3* Gdx.graphics.getDeltaTime()) return false;
         this.drag = true;
         this.touchDown = false;
-        System.out.println("Giữ chuột");
+//        System.out.println("Giữ chuột");
         return false;
     }
 

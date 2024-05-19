@@ -1,63 +1,77 @@
 package com.mygdx.game.controller;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.model.*;
+import com.mygdx.game.model.constant.PlayerState;
+import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.model.impl.Bullet.Kunai;
-
-import static com.mygdx.game.model.constant.Constants.PPM;
+import com.mygdx.game.model.impl.Player.Ninja;
+import com.mygdx.game.view.Brick;
+import com.mygdx.game.view.GameMap;
 
 public class CustomContactListener implements ContactListener {
-    public boolean isKunaiAndDownWallContact() {
-        return kunaiAndDownWallContact;
-    }
-    public void setKunaiAndDownWallContact(boolean kunaiAndDownWallContact) {
-        this.kunaiAndDownWallContact = kunaiAndDownWallContact;
-    }
-
-    public boolean isKunaiAndLeftWallContact() {
-        return kunaiAndLeftWallContact;
-    }
-
-    public void setKunaiAndLeftWallContact(boolean kunaiAndLeftWallContact) {
-        this.kunaiAndLeftWallContact = kunaiAndLeftWallContact;
-    }
-
-    public boolean isKunaiAndRightWallContact() {
-        return kunaiAndRightWallContact;
-    }
-
-    public void setKunaiAndRightWallContact(boolean kunaiAndRightWallContact) {
-        this.kunaiAndRightWallContact = kunaiAndRightWallContact;
-    }
-
-    public boolean isKunaiAndBrickContact() {
-        return kunaiAndBrickContact;
-    }
-
-    public void setKunaiAndBrickContact(boolean kunaiAndBrickContact) {
-        this.kunaiAndBrickContact = kunaiAndBrickContact;
-    }
-    public boolean isninjaAndDownWallContact() {
-        return ninjaAndDownWallContact;
-    }
-    public void setninjaAndDownWallContact(boolean ninjaAndDownWallContact) {
-        this.ninjaAndDownWallContact = ninjaAndDownWallContact;
-    }
-    private boolean kunaiAndDownWallContact = false;
-    private boolean kunaiAndLeftWallContact = false;
-    private boolean kunaiAndRightWallContact = false;
-    private boolean kunaiAndBrickContact = false;
-    private boolean ninjaAndDownWallContact = false;
-
+    // Xử lý khi bắt đầu va chạm
     @Override
     public void beginContact(Contact contact) {
-        // Xử lý khi bắt đầu va chạm
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+
+        // xử lí khi bullet đập vào cạnh
+        if(     (fixtureA.getUserData() instanceof Bullet && fixtureB.getUserData() == "wall") || (fixtureB.getUserData() instanceof Bullet && fixtureA.getUserData() == "wall") ||
+                (fixtureA.getUserData() instanceof Bullet && fixtureB.getUserData() == "platform") || (fixtureB.getUserData() instanceof Bullet && fixtureA.getUserData() == "platform")) {
+            Bullet bullet = (fixtureA.getUserData() instanceof Bullet) ? (Bullet) fixtureA.getUserData() : (Bullet) fixtureB.getUserData();
+            // nếu là đạn của quái và không thể bật tường thì bỏ nó ra khỏi list đạn của quái
+            if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
+                bullet.setAppear(false);
+                System.out.println("Remove EnemyBullet");
+            }
+            String s = (fixtureA.getUserData() instanceof Bullet) ? (String) fixtureB.getUserData() : (String) fixtureA.getUserData();
+            if(s=="platform") bullet.setRotation(360-bullet.getRotation());
+            else bullet.setRotation(180-bullet.getRotation());
+            bullet.setHandledContact(false);
+        }
+
+        // xử lí khi playerBullet đập vào brick
+        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Brick|| fixtureA.getUserData() instanceof Brick && fixtureA.getUserData() instanceof PlayerBullet)) {
+            PlayerBullet playerBullet = (fixtureA.getUserData() instanceof PlayerBullet) ? (PlayerBullet) fixtureA.getUserData() : (PlayerBullet) fixtureB.getUserData();
+            playerBullet.setRotation(360 - playerBullet.getRotation());
+            playerBullet.setHandledContact(false);
+        }
+
+        // xử lí khi player trúng enemyBullet
+        if((fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Player || fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof EnemyBullet)) {
+            System.out.println("Nhân vật trúng đạn");
+            EnemyBullet bullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
+            if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
+                bullet.setAppear(false);
+                System.out.println("Remove EnemyBullet");
+            }
+        }
+
+
+
+
+
+
+
+
+
+
     }
 
     @Override
     public void endContact(Contact contact) {
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
 
-        // Xử lý khi kết thúc va chạm
+        if (    (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() == "platform")  || (fixtureB.getUserData() instanceof Player && fixtureA.getUserData() == "platform") ||
+                (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof Brick)     || (fixtureB.getUserData() instanceof Player && fixtureA.getUserData() instanceof Brick)) {
+            Player player = (fixtureA.getUserData() instanceof Player) ? (Player) fixtureA.getUserData() : (Player) fixtureB.getUserData();
+            player.setPlayerState(PlayerState.GLIDE);
+//            player.body.setGravityScale(1);
+        }
+
     }
 
     @Override
@@ -65,27 +79,27 @@ public class CustomContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        // Kiểm tra xem fixture nào là của ninja và kunai
-        if ((fixtureA.getUserData() == "ninja" && fixtureB.getUserData() == "kunai") ||
-                (fixtureA.getUserData() == "kunai" && fixtureB.getUserData() == "ninja")) {
-            contact.setEnabled(false); // Vô hiệu hóa va chạm giữa ninja và kunai
+
+        if (    (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() == "platform")  || (fixtureB.getUserData() instanceof Player && fixtureA.getUserData() == "platform") ||
+                (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof Brick)     || (fixtureB.getUserData() instanceof Player && fixtureA.getUserData() instanceof Brick)) {
+            Player player = (fixtureA.getUserData() instanceof Player) ? (Player) fixtureA.getUserData() : (Player) fixtureB.getUserData();
+            player.setPlayerState(PlayerState.IDLE);
         }
-        if ((fixtureA.getUserData() == "kunai" && fixtureB.getUserData() == "downWall") ||
-                (fixtureA.getUserData() == "downWall" && fixtureB.getUserData() == "kunai")) {
-            kunaiAndDownWallContact = true;
+
+
+        if (    (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof PlayerBullet) || (fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Player)||
+                (fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof EnemyBullet)   || (fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Enemy)  ||
+                (fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof EnemyBullet)   ||
+                (fixtureA.getUserData() instanceof Brick && fixtureB.getUserData() instanceof EnemyBullet)   || (fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Brick)) {
+            // Vô hiệu hóa va chạm đạn đồng minh
+            contact.setEnabled(false);
         }
-        if ((fixtureA.getUserData() == "kunai" && fixtureB.getUserData() == "leftWall") ||
-                (fixtureA.getUserData() == "leftWall" && fixtureB.getUserData() == "kunai")) {
-            kunaiAndLeftWallContact = true;
-        }
-        if ((fixtureA.getUserData() == "kunai" && fixtureB.getUserData() == "rightWall") ||
-                (fixtureA.getUserData() == "rightWall" && fixtureB.getUserData() == "kunai")) {
-            kunaiAndRightWallContact = true;
-        }
-        if ((fixtureA.getUserData() == "ninja" && fixtureB.getUserData() == "downWall") ||
-                (fixtureB.getUserData() == "ninja" && fixtureA.getUserData() == "downWall") ) {
-            ninjaAndDownWallContact = true;
-        }
+
+
+
+
+
+
     }
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
