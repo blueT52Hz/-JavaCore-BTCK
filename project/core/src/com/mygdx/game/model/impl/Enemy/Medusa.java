@@ -60,7 +60,6 @@ public class Medusa extends Enemy {
 
     @Override
     public void update() {
-        if(TimeUtils.millis() - lastTimeAttack > 5000) spawnEnemyBullet();
         ArrayList<EnemyBullet> enemyBulletsRemove = new ArrayList<>();
         for(EnemyBullet enemyBullet : enemyBullets) {
             if(enemyBullet.isAppear()) enemyBullet.update();
@@ -71,6 +70,10 @@ public class Medusa extends Enemy {
             this.enemyBulletsBodies.remove(enemyBullet.getBody());
             this.enemyBullets.remove(enemyBullet);
         }
+        if(TimeUtils.millis() - lastTimeAttack > 3000) spawnEnemyBullet();
+
+
+
         x += speed * Gdx.graphics.getDeltaTime();
         if(this.x<=this.brick.getX()) {
             this.x=this.brick.getX();

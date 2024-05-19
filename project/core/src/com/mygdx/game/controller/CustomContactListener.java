@@ -49,6 +49,19 @@ public class CustomContactListener implements ContactListener {
             }
         }
 
+        // xử lí khi enemy trúng playerBullet
+        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
+            System.out.println("Quái trúng đạn");
+            Enemy enemy = (fixtureA.getUserData() instanceof Enemy) ? (Enemy) fixtureA.getUserData() : (Enemy) fixtureB.getUserData();
+            enemy.setDead(true);
+        }
+
+        // xử lí khi enemy trúng playerBullet
+        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof EnemyBullet || fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof PlayerBullet)) {
+            System.out.println("Quái trúng đạn");
+            EnemyBullet enemyBullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
+            enemyBullet.setAppear(false);
+        }
 
 
 
@@ -69,7 +82,6 @@ public class CustomContactListener implements ContactListener {
                 (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof Brick)     || (fixtureB.getUserData() instanceof Player && fixtureA.getUserData() instanceof Brick)) {
             Player player = (fixtureA.getUserData() instanceof Player) ? (Player) fixtureA.getUserData() : (Player) fixtureB.getUserData();
             player.setPlayerState(PlayerState.GLIDE);
-//            player.body.setGravityScale(1);
         }
 
     }
