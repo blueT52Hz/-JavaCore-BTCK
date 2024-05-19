@@ -130,8 +130,7 @@ public class HighscoreScreen implements Screen {
     @Override
     public void hide() {
         // Dispose resources when screen is hidden
-        dispose();
-    }
+}
 
     @Override
     public void dispose() {
