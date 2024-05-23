@@ -2,26 +2,32 @@ package com.mygdx.game.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.controller.LevelManager;
 import com.mygdx.game.model.Enemy;
-public class GameMap {
-    private LevelManager levelManager;
+
+
+public class GameMap extends Matrix4 {
+    public static World world = new World(new Vector2(0, -1f), false);
+    private final LevelManager levelManager;
     private float stateTime;
+    public Body leftWall, rightWall, downWall;
     public GameMap() {
-        this.stateTime = 0;
-        this.levelManager = LevelManager.getInstance();
+        stateTime = 0;
+        levelManager = LevelManager.getInstance();
     }
     public void draw(SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime();
+        levelManager.update();
         drawBackground(spriteBatch);
         drawBricks(spriteBatch);
         drawEnemies(spriteBatch);
     }
     public void drawBricks(SpriteBatch spriteBatch) {
-//        for(int i=0;i<3;++i) {
-//            this.levelManager.bricks.get(this.levelManager.currentLevel).get(i).draw(spriteBatch);
-//        }
-        for(Brick brick : this.levelManager.bricks.get(this.levelManager.currentLevel)) {
+        for(Brick brick : levelManager.bricks.get(levelManager.getCurrentLevel())) {
             brick.draw(spriteBatch);
         }
     }

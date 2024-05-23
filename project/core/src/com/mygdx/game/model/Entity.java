@@ -1,7 +1,9 @@
 package com.mygdx.game.model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.controller.HitBox;
+import com.badlogic.gdx.physics.box2d.Body;
+
+import static com.mygdx.game.model.constant.Constants.PPM;
 
 public abstract class Entity {
     protected float x, y;
@@ -9,7 +11,8 @@ public abstract class Entity {
     protected int height;
     protected float stateTime;
     protected boolean dead=false;
-    public abstract HitBox getHitBox();
+    public Body body;
+
     public abstract void draw(SpriteBatch spriteBatch, float gameMapStateTime);
     public abstract void update();
     public abstract void loadAnimation();
@@ -54,7 +57,15 @@ public abstract class Entity {
         return height;
     }
 
+    public Body getBody() {
+        return body;
+    }
+
     public boolean isDead() {
         return dead;
+    }
+
+    public void updateBodyPosition() {
+        this.body.setTransform(this.x/PPM, this.y/PPM, 0);
     }
 }

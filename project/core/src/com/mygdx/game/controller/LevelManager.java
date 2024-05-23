@@ -1,12 +1,19 @@
 package com.mygdx.game.controller;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.model.Enemy;
+import com.mygdx.game.model.EnemyBullet;
+import com.mygdx.game.model.Player;
 import com.mygdx.game.model.impl.Enemy.Demon;
 import com.mygdx.game.model.impl.Enemy.Medusa;
+import com.mygdx.game.model.impl.Player.Ninja;
 import com.mygdx.game.view.Brick;
+import com.mygdx.game.view.GameMap;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,11 +24,15 @@ public class LevelManager {
     public int maxLevel=0;
     public ArrayList<ArrayList<Brick>> bricks;
     public ArrayList<ArrayList<Enemy>> enemies;
+    public ArrayList<Body> bodies;
+    private Player player;
     private Texture startMapImage = new Texture("tiles/mapStart.png");
     private Texture mapImage = new Texture("tiles/map.png");
     private LevelManager(){
         bricks = new ArrayList<>();
         enemies = new ArrayList<>();
+        bodies = new ArrayList<>();
+        player = new Ninja();
         currentLevel = 0;
         maxLevel = 0;
         spawnNormalLevel();
@@ -42,7 +53,7 @@ public class LevelManager {
         tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 21, 16));
         tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 10, 16));
         for (Brick brick : tmp) {
-            tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 1, brick));
+            tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 1, brick, player));
         }
         enemies.add(tmp1);
         bricks.add(tmp);
@@ -51,24 +62,63 @@ public class LevelManager {
     public void spawnHardLevel() {
         ArrayList<Brick> tmp = new ArrayList<>();
         ArrayList<Enemy> tmp1 = new ArrayList<>();
-        tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(15)+1, 15, 25));
-        for (Brick brick : tmp) tmp1.add(new Medusa(brick.getX()+new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY()+ brick.getHeight(), 2, brick));
+        tmp.add(new Brick(new Random(System.currentTimeMillis()).nextInt(18)+1, 15, 20));
+        for (Brick brick : tmp) {
+            tmp1.add(new Medusa(brick.getX() + new Random(System.currentTimeMillis()).nextInt(brick.getWidth()), brick.getY() + brick.getHeight(), 2, brick, player));
+        }
         enemies.add(tmp1);
         bricks.add(tmp);
     }
 
-    public void spawnEnemy() {
+    public void update() {
+        ArrayList<Enemy> enemiesRemove = new ArrayList<>();
+        ArrayList<Body> bodiesRemove = new ArrayList<>();
+        for(Enemy enemy : enemies.get(currentLevel)) {
+            if(enemy.isDead()) {
+                enemiesRemove.add(enemy);
+                bodiesRemove.add(enemy.getBody());
+                for(EnemyBullet enemyBullet : enemy.getEnemyBullets()) {
+                    bodiesRemove.add(enemyBullet.getBody());
+                }
+            }
+        }
+        enemies.get(currentLevel).removeAll(enemiesRemove);
+        for(Body body : bodiesRemove) GameMap.world.destroyBody(body);
     }
+
     public void nextLevel() {
+        ArrayList<Enemy> enemiesRemove = new ArrayList<>();
+        for(Enemy enemy : enemies.get(currentLevel)) {
+            bodies.addAll(enemy.getEnemyBulletsBodies());
+            bodies.add(enemy.getBody());
+        }
+        for (Brick brick : bricks.get(currentLevel)) {
+            bodies.add(brick.getBody());
+        }
+        for (Body body : bodies) {
+            GameMap.world.destroyBody(body);
+        }
+        enemies.get(currentLevel).removeAll(enemiesRemove);
+        bodies.clear();
         this.currentLevel++;
         if(this.currentLevel>this.maxLevel) {
             maxLevel = currentLevel;
-            spawnNormalLevel();
+            if(currentLevel%10==0 && currentLevel!=0) spawnHardLevel();
+            else spawnNormalLevel();
         }
     }
     public void preLevel() {
+        for(Enemy enemy : enemies.get(currentLevel)) {
+            bodies.addAll(enemy.getEnemyBulletsBodies());
+            bodies.add(enemy.getBody());
+            bodies.add(enemy.getBrick().getBody());
+        }
+        for (Body body : bodies) {
+            GameMap.world.destroyBody(body);
+        }
         currentLevel--;
         if(currentLevel<0) currentLevel=0;
+
     }
 
     public int getCurrentLevel() {
@@ -77,5 +127,9 @@ public class LevelManager {
 
     public int getMaxLevel() {
         return maxLevel;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

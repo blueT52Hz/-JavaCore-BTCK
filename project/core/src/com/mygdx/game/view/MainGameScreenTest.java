@@ -4,121 +4,133 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.mygdx.game.controller.MouseHandler;
-import com.mygdx.game.entities.MainCharacter;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.controller.BoxManager;
+import com.mygdx.game.controller.CustomContactListener;
+import com.mygdx.game.controller.MouseHandler;
 import com.mygdx.game.model.constant.PlayerState;
-import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.model.impl.Player.Ninja;
 
+import static com.mygdx.game.model.constant.Constants.PPM;
+
 public class MainGameScreenTest implements Screen {
+    private final float SCALE  = 2.0f;
+    private Box2DDebugRenderer b2dr;
+    private OrthographicCamera camera;
     MyGdxGame game;
     GameMap gameMap;
-    public Ninja ninja;
-    public MouseHandler mouseHandler;
-    int dem=0;
+    MouseHandler mouseHandler;
+    Ninja ninja;
+    CustomContactListener contactListener;
+    private Body platform;
     public MainGameScreenTest(MyGdxGame game) {
         this.game = game;
-        ninja = new Ninja();
-        mouseHandler = new MouseHandler();
     }
     @Override
     public void show () {
+
         gameMap = new GameMap();
-        MainCharacter.load();
+        ninja = (Ninja) gameMap.getLevelManager().getPlayer();
+
+
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, w, h);
+        contactListener = new CustomContactListener();
+        GameMap.world.setContactListener(contactListener);
+        b2dr = new Box2DDebugRenderer();
+
+
+
+        // tạo box cho 3 góc trái phải trên dưới
+        gameMap.downWall = BoxManager.createBox(200, 0, 400, 32, true, GameMap.world, 0);
+        gameMap.downWall.getFixtureList().first().setUserData("platform");
+        gameMap.leftWall = BoxManager.createBox(8, 720/2, 16, 720, true, GameMap.world, 0);
+        gameMap.leftWall.getFixtureList().first().setUserData("wall");
+        gameMap.rightWall = BoxManager.createBox(400-8, 720/2, 16, 720, true, GameMap.world, 0);
+        gameMap.rightWall.getFixtureList().first().setUserData("wall");
+        mouseHandler = new MouseHandler();
         Gdx.input.setInputProcessor(mouseHandler);
     }
 
     @Override
     public void render (float deltaTime) {
+        update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+        // Test sinh level
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            gameMap.getLevelManager().nextLevel();
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            gameMap.getLevelManager().preLevel();
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
 
         game.batch.begin();
         gameMap.draw(game.batch);
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            gameMap.getLevelManager().currentLevel++;
-            if(gameMap.getLevelManager().currentLevel>gameMap.getLevelManager().maxLevel) {
-                if(gameMap.getLevelManager().currentLevel%10!=0) gameMap.getLevelManager().spawnNormalLevel();
-                else gameMap.getLevelManager().spawnHardLevel();
-                gameMap.getLevelManager().maxLevel++;
-            }
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            gameMap.getLevelManager().currentLevel--;
-            if(gameMap.getLevelManager().currentLevel<0) gameMap.getLevelManager().currentLevel=0;
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
+        ninja.kunai.update();
 
-//        if(mouseHandler.isDrag()) {
-//            ninja.navigationArrow.setOriginCenter();
-//            ninja.navigationArrow.setRotation(ninja.kunai.rotation);
-//            ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
-//            ninja.navigationArrow.draw(game.batch);
-//            ninja.kunai.updateRotation();
-//            ninja.update();
-//            ninja.setPlayerState(PlayerState.GLIDE);
-//            ninja.draw(game.batch, gameMap.getStateTime());
-//            ninja.setPlayerState(PlayerState.THROW);
-//            mouseHandler.setDrag(false);
-//        }
-//
-//        if(mouseHandler.isTouch()) {
-//            ninja.kunai.xSpeed = 0;
-//            ninja.kunai.ySpeed = 0;
-//            ninja.setX(ninja.kunai.x);
-//            ninja.setY(ninja.kunai.y);
-//            ninja.setPlayerState(PlayerState.FLASH);
-//            ninja.draw(game.batch, gameMap.getStateTime());
-//            ninja.setPlayerState(PlayerState.GLIDE);
-//            mouseHandler.setTouch(false);
-//        }
-
-
-
-        if (Gdx.input.isTouched()) {
-
+        if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
+        if(mouseHandler.isDrag()) {
+            ninja.kunai.body.setTransform(ninja.body.getPosition(), 90);
             ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setRotation(ninja.kunai.rotation);
-            ninja.navigationArrow.setBounds(ninja.kunai.x - 35, ninja.kunai.y - 26, 100, 20);
+            ninja.navigationArrow.setBounds(ninja.body.getPosition().x*PPM - 75, ninja.body.getPosition().y*PPM - 10, 150, 20);
+            ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
             ninja.navigationArrow.draw(game.batch);
 
-//            ninja.kunai.stateTime = 0;
-//            flameTest.stateTime = 0;
-
-
-            ninja.kunai.xSpeed = 0;
-            ninja.kunai.ySpeed = 0;
-
             ninja.kunai.updateRotation();
-//            flameTest.updateRotation(50, 50);
+            ninja.kunai.setAppear(true);
 
-            ninja.update();
-            ninja.setX(ninja.kunai.x);
-            ninja.setY(ninja.kunai.y);
-            // nếu đang trên mặt đất thì ninja.playerState = PlayerState.IDLE;
-            ninja.setPlayerState(PlayerState.GLIDE);
-            ninja.draw(game.batch, gameMap.getStateTime());
-            ninja.setPlayerState(PlayerState.THROW);
-        } else {
-            if(ninja.getPlayerState() != PlayerState.IDLE) {
-                ninja.update();
-                ninja.kunai.update();
-//                flameTest.update();
 
-                ninja.kunai.draw(game.batch);
-            }
-            ninja.draw(game.batch, gameMap.getStateTime());
+            ninja.throwed = false;
         }
 
 
+        // xử lí khi nhấn xuống
+        if(mouseHandler.isTouchDown()) {
+            ninja.kunai.setAppear(false);
+            ninja.kunai.body.setLinearVelocity(0,0);
+            ninja.body.setTransform(ninja.kunai.body.getPosition(), 0);
+            ninja.setPlayerState(PlayerState.FLASH);
+        }
+
+
+
+        // xử lí khi không làm gì
+        if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
+
+            // nếu kunai đang bay
+            if(ninja.kunai.isAppear()) {
+                ninja.kunai.updateSpeed();
+            } else {
+                ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
+            }
+
+
+            if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
+
+        }
+
+
+        ninja.draw(game.batch, gameMap.getStateTime());
+
         game.batch.end();
+
+//        b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
     @Override
-    public void resize (int i, int i1) {
-
+    public void resize (int width, int height) {
+        camera.setToOrtho(false, width, height);
     }
 
     @Override
@@ -138,6 +150,21 @@ public class MainGameScreenTest implements Screen {
 
     @Override
     public void dispose() {
+        b2dr.dispose();
+        GameMap.world.dispose();
+        game.batch.dispose();
+    }
+    public void cameraUpdate(float delta) {
+        Vector3 position = camera.position;
+        position.x = Gdx.graphics.getWidth()/2;
+        position.y = Gdx.graphics.getHeight()/2;
+        camera.position.set(position);
+        camera.update();
+    }
 
+    public void update(float delta) {
+        GameMap.world.step(1 / 60f, 6, 2);
+        cameraUpdate(delta);
+        game.batch.setProjectionMatrix(camera.combined);
     }
 }
