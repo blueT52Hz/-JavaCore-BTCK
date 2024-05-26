@@ -101,5 +101,8 @@ public class Ninja extends Player {
         waitImg = throwImg[0];
     }
 
+    public void update(float deltaTime) {
+        // Update logic for Ninja with deltaTime
+    }
 
 }

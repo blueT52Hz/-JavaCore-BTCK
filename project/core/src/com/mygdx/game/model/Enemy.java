@@ -41,4 +41,18 @@ public abstract class Enemy extends Entity{
     }
 
     protected abstract void setEnemyTilePath();
+
+    private EnemyState state;
+
+    public EnemyState getState() {
+        return state;
+    }
+
+    public void setState(EnemyState state) {
+        this.state = state;
+    }
+
+    public boolean isDefeated() {
+        return state == EnemyState.DEAD;
+    }
 }

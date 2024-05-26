@@ -9,16 +9,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.controller.LevelManager;
 import com.mygdx.game.model.Enemy;
 
-
 public class GameMap extends Matrix4 {
     public static World world = new World(new Vector2(0, -1f), false);
     private final LevelManager levelManager;
     private float stateTime;
     public Body leftWall, rightWall, downWall;
+
     public GameMap() {
         stateTime = 0;
         levelManager = LevelManager.getInstance();
     }
+
     public void draw(SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime();
         levelManager.update();
@@ -26,14 +27,15 @@ public class GameMap extends Matrix4 {
         drawBricks(spriteBatch);
         drawEnemies(spriteBatch);
     }
+
     public void drawBricks(SpriteBatch spriteBatch) {
-        for(Brick brick : levelManager.bricks.get(levelManager.getCurrentLevel())) {
+        for (Brick brick : levelManager.bricks.get(levelManager.getCurrentLevel())) {
             brick.draw(spriteBatch);
         }
     }
 
     public void drawEnemies(SpriteBatch spriteBatch) {
-        for(Enemy enemy : levelManager.enemies.get(levelManager.currentLevel)) {
+        for (Enemy enemy : levelManager.enemies.get(levelManager.currentLevel)) {
             enemy.draw(spriteBatch, stateTime);
         }
     }
@@ -48,5 +50,15 @@ public class GameMap extends Matrix4 {
 
     public float getStateTime() {
         return stateTime;
+    }
+
+    // Thêm phương thức kiểm tra tất cả quái vật đã bị tiêu diệt
+    public boolean allEnemiesDefeated() {
+        for (Enemy enemy : levelManager.enemies.get(levelManager.currentLevel)) {
+            if (!enemy.isDefeated()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
