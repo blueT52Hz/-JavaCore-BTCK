@@ -26,25 +26,30 @@ public class Brick {
         this.y = row*pixel;
         setWidth(pixel*6);
         setHeight(pixel);
-        this.body = BoxManager.createBox(x, y, width, height, true, GameMap.world, 0);
-        this.body.getFixtureList().first().setUserData(this);
-        this.body.setGravityScale(0);
+        createBody();
     }
     public void draw(SpriteBatch spriteBatch) {
         update();
         spriteBatch.draw(brickImage, x, y, width, height);
     }
     public void update() {
-//        x+=xSpeed * Gdx.graphics.getDeltaTime();
-//        if(x<=16) {
-//            xSpeed = -xSpeed;
-//            x = 16;
-//        }
-//        if(x>=Gdx.graphics.getWidth()-width-16) {
-//            xSpeed = -xSpeed;
-//            x = Gdx.graphics.getWidth()-width-16;
-//        }
+        x+=xSpeed * Gdx.graphics.getDeltaTime();
+        if(x<=16) {
+            xSpeed = -xSpeed;
+            x = 16;
+        }
+        if(x>=Gdx.graphics.getWidth()-width-16) {
+            xSpeed = -xSpeed;
+            x = Gdx.graphics.getWidth()-width-16;
+        }
         body.setTransform((x+width/2)/PPM, (y+height/2)/PPM, 0);
+    }
+
+    public void createBody() {
+        if(this.body != null) GameMap.world.destroyBody(body);
+        this.body = BoxManager.createBox(x, y, width, height, true, GameMap.world, 0);
+        this.body.getFixtureList().first().setUserData(this);
+        this.body.setGravityScale(0);
     }
 
     public void setWidth(int width) {

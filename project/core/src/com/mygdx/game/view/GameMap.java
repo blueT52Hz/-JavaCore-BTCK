@@ -14,10 +14,19 @@ public class GameMap extends Matrix4 {
     public static World world = new World(new Vector2(0, -1f), false);
     private final LevelManager levelManager;
     private float stateTime;
+    private int score;
+
     public Body leftWall, rightWall, downWall;
     public GameMap() {
+        score = 0;
         stateTime = 0;
         levelManager = LevelManager.getInstance();
+    }
+    public void addScore(int points) {
+        score += points;
+    }
+    public int getScore() {
+        return score;
     }
     public void draw(SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime();

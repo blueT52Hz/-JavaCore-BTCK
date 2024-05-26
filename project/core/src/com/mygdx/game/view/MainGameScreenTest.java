@@ -3,6 +3,7 @@ package com.mygdx.game.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,6 +15,8 @@ import com.mygdx.game.controller.CustomContactListener;
 import com.mygdx.game.controller.MouseHandler;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Player.Ninja;
+
+import java.awt.*;
 
 import static com.mygdx.game.model.constant.Constants.PPM;
 
@@ -41,7 +44,7 @@ public class MainGameScreenTest implements Screen {
         float h = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
-        contactListener = new CustomContactListener();
+        contactListener = new CustomContactListener(gameMap, game);
         GameMap.world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 
@@ -116,17 +119,18 @@ public class MainGameScreenTest implements Screen {
                 ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
             }
 
-
             if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
-
         }
 
 
         ninja.draw(game.batch, gameMap.getStateTime());
 
+        game.font.setColor(Color.CHARTREUSE);
+        game.font.draw(game.batch, "Score: " + gameMap.getScore(), 10, 20);
+
         game.batch.end();
 
-//        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+        //b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
     @Override
     public void resize (int width, int height) {

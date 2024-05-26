@@ -77,9 +77,8 @@ public class LevelManager {
             if(enemy.isDead()) {
                 enemiesRemove.add(enemy);
                 bodiesRemove.add(enemy.getBody());
-                for(EnemyBullet enemyBullet : enemy.getEnemyBullets()) {
-                    bodiesRemove.add(enemyBullet.getBody());
-                }
+                bodiesRemove.addAll(enemy.getEnemyBulletsBodies());
+                enemy.getEnemyBulletsBodies().clear();
             }
         }
         enemies.get(currentLevel).removeAll(enemiesRemove);
@@ -87,9 +86,9 @@ public class LevelManager {
     }
 
     public void nextLevel() {
-        ArrayList<Enemy> enemiesRemove = new ArrayList<>();
         for(Enemy enemy : enemies.get(currentLevel)) {
             bodies.addAll(enemy.getEnemyBulletsBodies());
+            enemy.getEnemyBulletsBodies().clear();
             bodies.add(enemy.getBody());
         }
         for (Brick brick : bricks.get(currentLevel)) {
@@ -98,7 +97,6 @@ public class LevelManager {
         for (Body body : bodies) {
             GameMap.world.destroyBody(body);
         }
-        enemies.get(currentLevel).removeAll(enemiesRemove);
         bodies.clear();
         this.currentLevel++;
         if(this.currentLevel>this.maxLevel) {
@@ -110,15 +108,26 @@ public class LevelManager {
     public void preLevel() {
         for(Enemy enemy : enemies.get(currentLevel)) {
             bodies.addAll(enemy.getEnemyBulletsBodies());
+            enemy.getEnemyBulletsBodies().clear();
             bodies.add(enemy.getBody());
-            bodies.add(enemy.getBrick().getBody());
         }
+
+        for (Brick brick : bricks.get(currentLevel)) {
+            bodies.add(brick.getBody());
+        }
+
         for (Body body : bodies) {
             GameMap.world.destroyBody(body);
         }
+        bodies.clear();
         currentLevel--;
         if(currentLevel<0) currentLevel=0;
-
+        for (Brick brick : bricks.get(currentLevel)) {
+            brick.createBody();
+        }
+        for (Enemy enemy : enemies.get(currentLevel)) {
+            enemy.createBody();
+        }
     }
 
     public int getCurrentLevel() {

@@ -2,6 +2,7 @@ package com.mygdx.game.controller;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.model.*;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Bullet.Flame;
@@ -9,8 +10,17 @@ import com.mygdx.game.model.impl.Bullet.Kunai;
 import com.mygdx.game.model.impl.Player.Ninja;
 import com.mygdx.game.view.Brick;
 import com.mygdx.game.view.GameMap;
+import com.mygdx.game.view.MainGameScreenTest;
+import com.mygdx.game.view.MainMenuScreen;
 
 public class CustomContactListener implements ContactListener {
+    private GameMap gameMap;
+    private MyGdxGame game;
+    private MainGameScreenTest mainGameScreen;
+    public CustomContactListener(GameMap gameMap, MyGdxGame game) {
+        this.gameMap = gameMap;
+        this.game = game;
+    }
     // Xử lý khi bắt đầu va chạm
     @Override
     public void beginContact(Contact contact) {
@@ -42,8 +52,11 @@ public class CustomContactListener implements ContactListener {
         // xử lí khi player trúng enemyBullet
         if((fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Player || fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof EnemyBullet)) {
             System.out.println("Nhân vật trúng đạn");
+
+            game.create();
+            game.setScreen(new MainMenuScreen(game));
             EnemyBullet bullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
-            if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
+            if(bullet != null && !bullet.isCanBounce()) {
                 bullet.setAppear(false);
                 System.out.println("Remove EnemyBullet");
             }
@@ -52,11 +65,17 @@ public class CustomContactListener implements ContactListener {
         // xử lí khi enemy trúng playerBullet
         if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
             System.out.println("Quái trúng đạn");
+            PlayerBullet playerBullet = (fixtureA.getUserData() instanceof PlayerBullet) ? (PlayerBullet) fixtureA.getUserData() : (PlayerBullet) fixtureB.getUserData();
             Enemy enemy = (fixtureA.getUserData() instanceof Enemy) ? (Enemy) fixtureA.getUserData() : (Enemy) fixtureB.getUserData();
+            if (enemy != null && playerBullet != null) {
+                enemy.setDead(true);
+                playerBullet.setAppear(false);
+                gameMap.addScore(1);
+            }
             enemy.setDead(true);
         }
 
-        // xử lí khi enemy trúng playerBullet
+        // xử lí khi enemyBullet trúng playerBullet
         if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof EnemyBullet || fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof PlayerBullet)) {
             System.out.println("Quái trúng đạn");
             EnemyBullet enemyBullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
@@ -106,11 +125,6 @@ public class CustomContactListener implements ContactListener {
             // Vô hiệu hóa va chạm đạn đồng minh
             contact.setEnabled(false);
         }
-
-
-
-
-
 
     }
     @Override
