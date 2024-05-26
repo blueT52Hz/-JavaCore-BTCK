@@ -39,7 +39,7 @@ public class MainGameScreen implements Screen {
         float h = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
-        contactListener = new CustomContactListener();
+        contactListener = new CustomContactListener(gameMap, game);
         GameMap.world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 

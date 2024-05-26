@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.model.PlayerScore;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -158,29 +159,5 @@ public class HighscoreScreen implements Screen {
             e.printStackTrace();
         }
         return playerScores;
-    }
-
-    private static class PlayerScore {
-        private String name;
-        private int level;
-        private int score;
-
-        public PlayerScore(String name, int level, int score) {
-            this.name = name;
-            this.level = level;
-            this.score = score;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public int getScore() {
-            return score;
-        }
     }
 }
