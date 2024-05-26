@@ -30,13 +30,9 @@ public class Medusa extends Enemy {
         this.y = y;
         this.enemyState = EnemyState.MOVE;
         this.speed = 10 + this.brick.getxSpeed();
-        createBody();
-        spawnEnemyBullet();
-    }
 
-    @Override
-    public void createBody() {
-        if(this.body != null) GameMap.world.destroyBody(body);
+        spawnEnemyBullet();
+
         this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
         this.body.setGravityScale(0);
