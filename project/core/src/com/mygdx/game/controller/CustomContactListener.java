@@ -2,6 +2,7 @@ package com.mygdx.game.controller;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.model.*;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Bullet.Flame;
@@ -9,8 +10,16 @@ import com.mygdx.game.model.impl.Bullet.Kunai;
 import com.mygdx.game.model.impl.Player.Ninja;
 import com.mygdx.game.view.Brick;
 import com.mygdx.game.view.GameMap;
+import com.mygdx.game.view.MainGameScreenTest;
 
 public class CustomContactListener implements ContactListener {
+    private GameMap gameMap;
+    private MyGdxGame game;
+    private MainGameScreenTest mainGameScreen;
+    public CustomContactListener(GameMap gameMap, MyGdxGame game) {
+        this.gameMap = gameMap;
+        this.game = game;
+    }
     // Xử lý khi bắt đầu va chạm
     @Override
     public void beginContact(Contact contact) {
@@ -51,8 +60,13 @@ public class CustomContactListener implements ContactListener {
 
         // xử lí khi enemy trúng playerBullet
         if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
-            System.out.println("Quái trúng đạn");
+            PlayerBullet playerBullet = (fixtureA.getUserData() instanceof PlayerBullet) ? (PlayerBullet) fixtureA.getUserData() : (PlayerBullet) fixtureB.getUserData();
             Enemy enemy = (fixtureA.getUserData() instanceof Enemy) ? (Enemy) fixtureA.getUserData() : (Enemy) fixtureB.getUserData();
+            if (enemy != null && playerBullet != null) {
+                enemy.setDead(true);
+                playerBullet.setAppear(false);
+                gameMap.playerScore.addScore(1);
+            }
             enemy.setDead(true);
         }
 
