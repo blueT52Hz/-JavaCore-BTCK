@@ -12,8 +12,8 @@ public abstract class Entity {
     protected int width;
     protected int height;
     protected float stateTime;
-    protected boolean dead=false;
-    public Body body;
+    protected boolean dead;
+    protected Body body;
 
     public abstract void draw(SpriteBatch spriteBatch, float gameMapStateTime);
     public abstract void update();

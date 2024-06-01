@@ -48,8 +48,10 @@ public class MainGameScreenTest implements Screen {
 
 
         // tạo box cho 3 góc trái phải trên dưới
-        gameMap.downWall = BoxManager.createBox(200, 0, 400, 32, true, GameMap.world, 0);
-        gameMap.downWall.getFixtureList().first().setUserData("platform");
+        gameMap.bottomWall = BoxManager.createBox(200, 0-16, 400, 32, true, GameMap.world, 0);
+        gameMap.bottomWall.getFixtureList().first().setUserData("platform");
+        gameMap.topWall = BoxManager.createBox(200, 720+16, 400, 32, true, GameMap.world, 0);
+        gameMap.topWall.getFixtureList().first().setUserData("platform");
         gameMap.leftWall = BoxManager.createBox(8, 720/2, 16, 720, true, GameMap.world, 0);
         gameMap.leftWall.getFixtureList().first().setUserData("wall");
         gameMap.rightWall = BoxManager.createBox(400-8, 720/2, 16, 720, true, GameMap.world, 0);
@@ -82,9 +84,9 @@ public class MainGameScreenTest implements Screen {
 
         if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
         if(mouseHandler.isDrag()) {
-            ninja.kunai.body.setTransform(ninja.body.getPosition(), 90);
+            ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
             ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setBounds(ninja.body.getPosition().x*PPM - 75, ninja.body.getPosition().y*PPM - 10, 150, 20);
+            ninja.navigationArrow.setBounds(ninja.getBody().getPosition().x*PPM - 75, ninja.getBody().getPosition().y*PPM - 10, 150, 20);
             ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
             ninja.navigationArrow.draw(game.batch);
 
@@ -100,7 +102,7 @@ public class MainGameScreenTest implements Screen {
         if(mouseHandler.isTouchDown()) {
             ninja.kunai.setAppear(false);
             ninja.kunai.body.setLinearVelocity(0,0);
-            ninja.body.setTransform(ninja.kunai.body.getPosition(), 0);
+            ninja.getBody().setTransform(ninja.kunai.body.getPosition(), 0);
             ninja.setPlayerState(PlayerState.FLASH);
         }
 
@@ -113,7 +115,7 @@ public class MainGameScreenTest implements Screen {
             if(ninja.kunai.isAppear()) {
                 ninja.kunai.updateSpeed();
             } else {
-                ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
+                ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
             }
 
 
