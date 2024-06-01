@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.controller.LevelManager;
+import com.mygdx.game.model.Coin;
 import com.mygdx.game.model.Enemy;
 
 
@@ -14,7 +15,7 @@ public class GameMap extends Matrix4 {
     public static World world = new World(new Vector2(0, -1f), false);
     private final LevelManager levelManager;
     private float stateTime;
-    public Body leftWall, rightWall, downWall;
+    public Body leftWall, rightWall, bottomWall, topWall;
     public GameMap() {
         stateTime = 0;
         levelManager = LevelManager.getInstance();
@@ -25,7 +26,14 @@ public class GameMap extends Matrix4 {
         drawBackground(spriteBatch);
         drawBricks(spriteBatch);
         drawEnemies(spriteBatch);
+        drawCoins(spriteBatch);
     }
+    public void drawCoins(SpriteBatch spriteBatch) {
+        for(Coin coin : levelManager.getCoins().get(levelManager.getCurrentLevel())) {
+            coin.draw(spriteBatch, stateTime);
+        }
+    }
+
     public void drawBricks(SpriteBatch spriteBatch) {
         for(Brick brick : levelManager.bricks.get(levelManager.getCurrentLevel())) {
             brick.draw(spriteBatch);
