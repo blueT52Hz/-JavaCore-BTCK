@@ -26,6 +26,7 @@ public class GameMap extends Matrix4 {
         drawBackground(spriteBatch);
         drawBricks(spriteBatch);
         drawEnemies(spriteBatch);
+        drawCoins(spriteBatch);
     }
     public void drawCoins(SpriteBatch spriteBatch) {
         for(Coin coin : levelManager.getCoins().get(levelManager.getCurrentLevel())) {
@@ -55,15 +56,5 @@ public class GameMap extends Matrix4 {
 
     public float getStateTime() {
         return stateTime;
-    }
-
-    // Thêm phương thức kiểm tra tất cả quái vật đã bị tiêu diệt
-    public boolean allEnemiesDefeated() {
-        for (Enemy enemy : levelManager.enemies.get(levelManager.currentLevel)) {
-            if (!enemy.isDead()) {
-                return false;
-            }
-        }
-        return true;
     }
 }
