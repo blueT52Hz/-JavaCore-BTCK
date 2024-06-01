@@ -33,7 +33,9 @@ public class Ninja extends Player {
         this.kunai = new Kunai(x, y);
         this.playerState = PlayerState.IDLE;
         this.navigationArrow = new Sprite(new Texture("Arrow2.png"));
-        createBody();
+        this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
+        this.body.getFixtureList().first().setUserData(this);
+
         loadAnimation();
     }
 

@@ -12,17 +12,15 @@ public abstract class Enemy extends Entity{
     protected EnemyState enemyState;
     protected Animation moveRightAnimation;
     protected Animation moveLeftAnimation;
-    protected Animation deathRightAnimation;
-    protected Animation deathLeftAnimation;
-    protected Animation attackRightAnimation;
-    protected Animation attackLeftAnimation;
-
+    protected Animation deadAnimation;
     protected Brick brick;
     protected ArrayList<EnemyBullet> enemyBullets;
     protected ArrayList<Body> enemyBulletsBodies;
     protected Player target;
     protected int level;
     public Enemy(int level, Brick brick, Player target) {
+//        this.x = x;
+//        this.y = y;
         enemyBullets = new ArrayList<>();
         enemyBulletsBodies = new ArrayList<>();
         this.level = level;
