@@ -3,6 +3,7 @@ package com.mygdx.game.controller;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.model.*;
+import com.mygdx.game.model.constant.EnemyState;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Bullet.Flame;
 import com.mygdx.game.model.impl.Bullet.Kunai;
@@ -24,7 +25,7 @@ public class CustomContactListener implements ContactListener {
             // nếu là đạn của quái và không thể bật tường thì bỏ nó ra khỏi list đạn của quái
             if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
                 bullet.setAppear(false);
-                System.out.println("Remove EnemyBullet");
+//                System.out.println("Remove EnemyBullet");
             }
             String s = (fixtureA.getUserData() instanceof Bullet) ? (String) fixtureB.getUserData() : (String) fixtureA.getUserData();
             if(s=="platform") bullet.setRotation(360-bullet.getRotation());
@@ -41,28 +42,31 @@ public class CustomContactListener implements ContactListener {
 
         // xử lí khi player trúng enemyBullet
         if((fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Player || fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof EnemyBullet)) {
-            System.out.println("Nhân vật trúng đạn");
+//            System.out.println("Nhân vật trúng đạn");
             EnemyBullet bullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
             if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
                 bullet.setAppear(false);
-                System.out.println("Remove EnemyBullet");
+//                System.out.println("Remove EnemyBullet");
             }
         }
 
-        // xử lí khi enemy trúng playerBullet
-        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
-            System.out.println("Quái trúng đạn");
-            Enemy enemy = (fixtureA.getUserData() instanceof Enemy) ? (Enemy) fixtureA.getUserData() : (Enemy) fixtureB.getUserData();
-            enemy.setDead(true);
-        }
 
-        // xử lí khi enemy trúng playerBullet
+        // xử lí khi enemyBullet trúng playerBullet
         if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof EnemyBullet || fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof PlayerBullet)) {
-            System.out.println("Quái trúng đạn");
             EnemyBullet enemyBullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
             enemyBullet.setAppear(false);
         }
 
+        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
+//            System.out.println("Quái trúng đạn");
+            PlayerBullet playerBullet = (fixtureA.getUserData() instanceof Enemy) ? (PlayerBullet) fixtureB.getUserData() : (PlayerBullet)fixtureA.getUserData();
+            Enemy enemy = (fixtureA.getUserData() instanceof Enemy) ? (Enemy) fixtureA.getUserData() : (Enemy) fixtureB.getUserData();
+            if(enemy.getEnemyState() != EnemyState.DEAD) {
+                enemy.setEnemyState(EnemyState.DEAD);
+                enemy.setStateTime(0);
+            }
+
+        }
 
 
 
@@ -83,6 +87,7 @@ public class CustomContactListener implements ContactListener {
             Player player = (fixtureA.getUserData() instanceof Player) ? (Player) fixtureA.getUserData() : (Player) fixtureB.getUserData();
             player.setPlayerState(PlayerState.GLIDE);
         }
+
 
     }
 
@@ -108,8 +113,14 @@ public class CustomContactListener implements ContactListener {
         }
 
 
+        if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
+            contact.setEnabled(false);
 
+        }
 
+        if(fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof Brick || fixtureA.getUserData() instanceof Brick && fixtureB.getUserData() instanceof Enemy) {
+            contact.setEnabled(false);
+        }
 
 
     }

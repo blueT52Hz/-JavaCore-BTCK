@@ -25,7 +25,6 @@ public abstract class Bullet extends Sprite {
     protected abstract void update();
     protected abstract void updateRotation(float xWeapon, float yWeapon);
     public void updateBodyPosition() {
-        System.out.println("Update " + getRotation());
         this.body.setTransform(body.getPosition(), getRotation() * MathUtils.degreesToRadians);
         handledContact = true;
     }

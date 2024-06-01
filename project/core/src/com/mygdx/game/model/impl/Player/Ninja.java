@@ -33,9 +33,7 @@ public class Ninja extends Player {
         this.kunai = new Kunai(x, y);
         this.playerState = PlayerState.IDLE;
         this.navigationArrow = new Sprite(new Texture("Arrow2.png"));
-        this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
-        this.body.getFixtureList().first().setUserData(this);
-
+        createBody();
         loadAnimation();
     }
 
@@ -101,8 +99,11 @@ public class Ninja extends Player {
         waitImg = throwImg[0];
     }
 
-    public void update(float deltaTime) {
-        // Update logic for Ninja with deltaTime
+    @Override
+    public void createBody() {
+        if(this.body != null) GameMap.world.destroyBody(body);
+        this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
+        this.body.getFixtureList().first().setUserData(this);
     }
 
 }

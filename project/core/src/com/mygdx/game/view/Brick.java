@@ -26,9 +26,7 @@ public class Brick {
         this.y = row*pixel;
         setWidth(pixel*6);
         setHeight(pixel);
-        this.body = BoxManager.createBox(x, y, width, height, true, GameMap.world, 0);
-        this.body.getFixtureList().first().setUserData(this);
-        this.body.setGravityScale(0);
+        createBody();
     }
     public void draw(SpriteBatch spriteBatch) {
         update();
@@ -45,6 +43,13 @@ public class Brick {
 //            x = Gdx.graphics.getWidth()-width-16;
 //        }
         body.setTransform((x+width/2)/PPM, (y+height/2)/PPM, 0);
+    }
+
+    public void createBody() {
+        if(this.body != null) GameMap.world.destroyBody(body);
+        this.body = BoxManager.createBox(x, y, width, height, true, GameMap.world, 0);
+        this.body.getFixtureList().first().setUserData(this);
+        this.body.setGravityScale(0);
     }
 
     public void setWidth(int width) {
