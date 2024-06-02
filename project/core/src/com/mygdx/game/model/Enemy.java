@@ -63,5 +63,6 @@ public abstract class Enemy extends Entity{
     @Override
     public boolean isDead() {
         return super.isDead();
+
     }
 }

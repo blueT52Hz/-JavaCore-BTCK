@@ -33,15 +33,15 @@ public class Brick {
         spriteBatch.draw(brickImage, x, y, width, height);
     }
     public void update() {
-//        x+=xSpeed * Gdx.graphics.getDeltaTime();
-//        if(x<=16) {
-//            xSpeed = -xSpeed;
-//            x = 16;
-//        }
-//        if(x>=Gdx.graphics.getWidth()-width-16) {
-//            xSpeed = -xSpeed;
-//            x = Gdx.graphics.getWidth()-width-16;
-//        }
+        x+=xSpeed * Gdx.graphics.getDeltaTime();
+        if(x<=16) {
+            xSpeed = -xSpeed;
+            x = 16;
+        }
+        if(x>=Gdx.graphics.getWidth()-width-16) {
+            xSpeed = -xSpeed;
+            x = Gdx.graphics.getWidth()-width-16;
+        }
         body.setTransform((x+width/2)/PPM, (y+height/2)/PPM, 0);
     }
 

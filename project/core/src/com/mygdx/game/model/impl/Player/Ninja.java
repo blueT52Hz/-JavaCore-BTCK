@@ -108,6 +108,7 @@ public class Ninja extends Player {
     public void createBody() {
         this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
+
     }
 
     @Override

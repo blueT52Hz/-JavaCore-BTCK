@@ -77,4 +77,7 @@ public class MouseHandler implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+    public void update() {
+        // Update logic for MouseHandler if needed
+    }
 }
