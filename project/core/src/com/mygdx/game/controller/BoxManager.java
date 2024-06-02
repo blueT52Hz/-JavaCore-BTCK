@@ -1,6 +1,7 @@
 package com.mygdx.game.controller;
 
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.view.GameMap;
 
 import static com.mygdx.game.model.constant.Constants.PPM;
 
@@ -13,6 +14,7 @@ public class BoxManager {
         def.position.set(x/PPM, y/PPM);
         def.fixedRotation = true;
         pBody = world.createBody(def);
+
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((float) width/2/PPM, (float) height/2/PPM);
         FixtureDef fixtureDef = new FixtureDef();

@@ -10,14 +10,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.controller.BoxManager;
+import com.mygdx.game.controller.CoinCounter;
 import com.mygdx.game.controller.CustomContactListener;
 import com.mygdx.game.controller.MouseHandler;
+import com.mygdx.game.model.Coin;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Player.Ninja;
+
+import java.util.ArrayList;
 
 import static com.mygdx.game.model.constant.Constants.PPM;
 
@@ -30,24 +39,22 @@ public class MainGameScreenTest implements Screen {
     MouseHandler mouseHandler;
     Ninja ninja;
     CustomContactListener contactListener;
-
     private BitmapFont lvFont, completeFont, taptocontinueFont, nameFont, coinFont, scoreFont;
     private FreeTypeFontGenerator fontGenerator;
     private Texture tableTexture;
     private Texture coinTexture;
-
     private GlyphLayout layout;
     private boolean levelComplete;
-
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
-
-    public MainGameScreenTest(MyGdxGame game) {
+    private String playerName;
+    private Body platform;
+    public MainGameScreenTest(MyGdxGame game, String playerName) {
         this.game = game;
+        this.playerName = playerName;
         this.fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
     }
-
     @Override
-    public void show() {
+    public void show () {
         gameMap = new GameMap();
         ninja = (Ninja) gameMap.getLevelManager().getPlayer();
 
@@ -55,24 +62,27 @@ public class MainGameScreenTest implements Screen {
         float h = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
-        contactListener = new CustomContactListener(gameMap, game);
+        contactListener = new CustomContactListener(this.gameMap);
         GameMap.world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 
-        layout = new GlyphLayout();
-
-        gameMap.downWall = BoxManager.createBox(200, 0, 400, 32, true, GameMap.world, 0);
-        gameMap.downWall.getFixtureList().first().setUserData("platform");
-        gameMap.leftWall = BoxManager.createBox(8, 720 / 2, 16, 720, true, GameMap.world, 0);
+        // tạo box cho 3 góc trái phải trên dưới
+        gameMap.bottomWall = BoxManager.createBox(200, 0-16, 400, 32, true, GameMap.world, 0);
+        gameMap.bottomWall.getFixtureList().first().setUserData("bottomWall");
+        gameMap.topWall = BoxManager.createBox(200, 720+16, 400, 32, true, GameMap.world, 0);
+        gameMap.topWall.getFixtureList().first().setUserData("topWall");
+        gameMap.leftWall = BoxManager.createBox(8, 720/2, 16, 720, true, GameMap.world, 0);
         gameMap.leftWall.getFixtureList().first().setUserData("wall");
         gameMap.rightWall = BoxManager.createBox(400 - 8, 720 / 2, 16, 720, true, GameMap.world, 0);
         gameMap.rightWall.getFixtureList().first().setUserData("wall");
+
         mouseHandler = new MouseHandler();
         Gdx.input.setInputProcessor(mouseHandler);
 
+        layout = new GlyphLayout();
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 50;
-        parameter.color = Color.YELLOW;
+        parameter.color = Color.RED;
         completeFont = fontGenerator.generateFont(parameter);
 
         parameter.size = 20;
@@ -99,6 +109,7 @@ public class MainGameScreenTest implements Screen {
         coinTexture = new Texture(Gdx.files.internal("Coin/Coin(5).png"));
 
         Gdx.app.log("Font", "Font generated successfully.");
+  
     }
 
     @Override
@@ -110,44 +121,78 @@ public class MainGameScreenTest implements Screen {
         game.batch.begin();
         gameMap.draw(game.batch);
 
+        // vẽ UI
+        String levelText = "LV " + gameMap.getLevelManager().currentLevel;
+        layout.setText(lvFont, levelText);
+        float textWidth = layout.width;
+        float x = (Gdx.graphics.getWidth() - textWidth) / 2;
+        float y = gameMap.bottomWall.getPosition().y * PPM + 130; // Đặt ở dưới màn hình, trên downWall một chút
+
+        lvFont.setColor(1, 1, 1, 0.1f); // Đặt độ mờ là 50b%
+        lvFont.draw(game.batch, levelText, x, y);
+
+        // Vẽ tên người chơi
+        nameFont.draw(game.batch, "Name: " + playerName, 20, Gdx.graphics.getHeight() - 10);
+
+        // Vẽ hình ảnh coin và số lượng coin
+        game.batch.draw(coinTexture, 12, Gdx.graphics.getHeight() - 40 - 26, 35, 35);
+        String coinCount = String.valueOf(CoinCounter.getCoinIngame());
+        coinFont.draw(game.batch, coinCount, 50, Gdx.graphics.getHeight() - 40);
+
+        scoreFont.draw(game.batch, "Score: " + Integer.toString(gameMap.playerScore.getScore()), Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
+        // end vẽ UI
+
         ninja.kunai.update();
 
         if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
-        if (mouseHandler.isDrag()) {
-            ninja.kunai.body.setTransform(ninja.body.getPosition(), 90);
+        if(mouseHandler.isDrag()) {
+            ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
             ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setBounds(ninja.body.getPosition().x * PPM - 75, ninja.body.getPosition().y * PPM - 10, 150, 20);
+            ninja.navigationArrow.setBounds(ninja.getBody().getPosition().x*PPM - 75, ninja.getBody().getPosition().y*PPM - 10, 150, 20);
             ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
             ninja.navigationArrow.draw(game.batch);
-
             ninja.kunai.updateRotation();
             ninja.kunai.setAppear(true);
-
             ninja.throwed = false;
         }
 
-        if (mouseHandler.isTouchDown()) {
-            ninja.kunai.setAppear(false);
-            ninja.kunai.body.setLinearVelocity(0, 0);
-            ninja.body.setTransform(ninja.kunai.body.getPosition(), 0);
+        // xử lí khi nhấn xuống
+        if(ninja.getPlayerState() != PlayerState.DEAD && mouseHandler.isTouchDown()) {
+            ninja.setAppear(true);
+            ninja.getBody().setTransform(ninja.kunai.body.getPosition(), 0);
             ninja.setPlayerState(PlayerState.FLASH);
+            ninja.setPlace(gameMap.getLevelManager().currentLevel);
+
+            ninja.kunai.setAppear(false);
+            ninja.kunai.body.setLinearVelocity(0,0);
         }
 
-        if (!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
-            if (ninja.kunai.isAppear()) {
-                ninja.kunai.updateSpeed();
-            } else {
-                ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
+        // xử lí khi không làm gì
+        if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
+            // nếu kunai đang bay
+            if(ninja.kunai.isAppear())  ninja.kunai.updateSpeed();
+            else                        ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
+            if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
+        }
+        if(ninja.getPlace() == gameMap.getLevelManager().currentLevel) ninja.draw(game.batch, gameMap.getStateTime());
+            // Vẽ tên người chơi
+            String playerName = "Name: "; // Thay thế bằng tên thực tế của người chơi
+            nameFont.draw(game.batch, playerName, 20, Gdx.graphics.getHeight() - 10);
+
+        if (ninja.getPlayerState() == PlayerState.DEAD) {
+            Array<Body> bodies = new Array<>();
+            GameMap.world.getBodies(bodies);
+            System.out.println(bodies.size);
+            for (Body body : bodies) {
+                GameMap.destroyBody(body);
             }
-            if (!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
-        }
 
-        ninja.draw(game.batch, gameMap.getStateTime());
-
-        if (gameMap.allEnemiesDefeated()) {
+            GameMap.playerScore.saveScore(playerName);
+            CoinCounter.updateCoin(CoinCounter.getCoinIngame());
+            CoinCounter.resetCoinIngame();
             game.batch.draw(tableTexture, MyGdxGame.WIDTH / 2 - 180, 200, 360, 300);
 
-            String completeText = "COMPLETE";
+            String completeText = "YOU LOSE";
             layout.setText(completeFont, completeText);
             float completeTextWidth = layout.width;
             float completeTextHeight = layout.height;
@@ -163,34 +208,13 @@ public class MainGameScreenTest implements Screen {
             float continueTextY = (Gdx.graphics.getHeight() - continueTextHeight) / 2 - 30;
             taptocontinueFont.draw(game.batch, continueText, continueTextX, continueTextY);
 
-            if (Gdx.input.justTouched()) {
-                gameMap.getLevelManager().nextLevel();
-                levelComplete = false;
+            if(Gdx.input.justTouched()) {
             }
-        } else {
-            String levelText = "LV " + (gameMap.getLevelManager().currentLevel + 1);
-            layout.setText(lvFont, levelText);
-            float textWidth = layout.width;
-            float x = (Gdx.graphics.getWidth() - textWidth) / 2;
-            float y = gameMap.downWall.getPosition().y * PPM + 130; // Đặt ở dưới màn hình, trên downWall một chút
-
-            lvFont.setColor(1, 1, 1, 0.1f); // Đặt độ mờ là 50%
-            lvFont.draw(game.batch, levelText, x, y);
-
-            // Vẽ tên người chơi
-            String playerName = "Name: "; // Thay thế bằng tên thực tế của người chơi
-            nameFont.draw(game.batch, playerName, 20, Gdx.graphics.getHeight() - 10);
-
-            // Vẽ hình ảnh coin và số lượng coin
-            game.batch.draw(coinTexture, 12, Gdx.graphics.getHeight() - 40 - 26, 35, 35);
-            String coinCount = "x 9999"; // Thay thế bằng số coin thực tế của người chơi
-            coinFont.draw(game.batch, coinCount, 50, Gdx.graphics.getHeight() - 40);
+        }
 
             scoreFont.draw(game.batch, "Score: " + Integer.toString(gameMap.playerScore.getScore()), Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
 
-        }
-
-        game.batch.end();
+        b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
 
     @Override
@@ -217,6 +241,13 @@ public class MainGameScreenTest implements Screen {
         }
         tableTexture.dispose();
         coinTexture.dispose();
+    }
+    public void cameraUpdate(float delta) {
+        Vector3 position = camera.position;
+        position.x = Gdx.graphics.getWidth()/2;
+        position.y = Gdx.graphics.getHeight()/2;
+        camera.position.set(position);
+        camera.update();
     }
 
     public void update(float deltaTime) {

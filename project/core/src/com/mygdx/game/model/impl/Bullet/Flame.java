@@ -21,9 +21,9 @@ public class Flame extends EnemyBullet {
     public boolean started;
     public Flame(float x, float y, Enemy enemy) {
         super(new Texture("Entities/flame/flame_5.png"), enemy);
-        this.width=20;
-        this.height=10;
-        this.speed = 100;
+        this.width=20*enemy.getLevel();
+        this.height=10*enemy.getLevel();
+        this.speed = 125f/enemy.getLevel();
         this.stateTime = 0;
         this.started = false;
         this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);
@@ -40,8 +40,6 @@ public class Flame extends EnemyBullet {
         this.setTexture(tmp);
         super.draw(spriteBatch);
     }
-
-
 
 
     private void loadAnimation() {

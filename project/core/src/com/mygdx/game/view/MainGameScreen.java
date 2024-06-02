@@ -5,9 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.controller.BoxManager;
 import com.mygdx.game.controller.CustomContactListener;
@@ -32,93 +32,41 @@ public class MainGameScreen implements Screen {
     }
     @Override
     public void show () {
-        ninja = new Ninja();
+
         gameMap = new GameMap();
+        ninja = (Ninja) gameMap.getLevelManager().getPlayer();
+
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
-        contactListener = new CustomContactListener(gameMap, game);
+        contactListener = new CustomContactListener(this.gameMap);
         GameMap.world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 
 
 
         // tạo box cho 3 góc trái phải trên dưới
-
-        gameMap.downWall = BoxManager.createBox(200, 0, 400, 32, true, GameMap.world, 0);
-        gameMap.downWall.getFixtureList().first().setUserData("downWall");
+        gameMap.bottomWall = BoxManager.createBox(200, 0, 400, 32, true, GameMap.world, 0);
+        gameMap.bottomWall.getFixtureList().first().setUserData("platform");
+        gameMap.topWall = BoxManager.createBox(200, 720+16, 400, 32, true, GameMap.world, 0);
+        gameMap.topWall.getFixtureList().first().setUserData("platform");
         gameMap.leftWall = BoxManager.createBox(8, 720/2, 16, 720, true, GameMap.world, 0);
-        gameMap.leftWall.getFixtureList().first().setUserData("leftWall");
+        gameMap.leftWall.getFixtureList().first().setUserData("wall");
         gameMap.rightWall = BoxManager.createBox(400-8, 720/2, 16, 720, true, GameMap.world, 0);
-        gameMap.rightWall.getFixtureList().first().setUserData("rightWall");
+        gameMap.rightWall.getFixtureList().first().setUserData("wall");
         mouseHandler = new MouseHandler();
         Gdx.input.setInputProcessor(mouseHandler);
     }
 
     @Override
     public void render (float deltaTime) {
-        update(Gdx.graphics.getDeltaTime());
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            gameMap.getLevelManager().nextLevel();
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            gameMap.getLevelManager().preLevel();
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
-
-        game.batch.begin();
-        gameMap.draw(game.batch);
-
-
-
-        ninja.kunai.setRotation(ninja.kunai.body.getAngle() * MathUtils.radiansToDegrees);
-        ninja.kunai.setBounds(ninja.kunai.body.getPosition().x * PPM - 20,ninja.kunai.body.getPosition().y * PPM - 4, 40 , 8);
-        if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
-        if(mouseHandler.isDrag()) {
-            ninja.kunai.body.setTransform(ninja.body.getPosition(), ninja.kunai.getRotation() * MathUtils.degreesToRadians);
-            ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setBounds(ninja.body.getPosition().x*PPM - 75, ninja.body.getPosition().y*PPM - 10, 150, 20);
-            ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
-            ninja.navigationArrow.draw(game.batch);
-            ninja.kunai.update();
-            ninja.kunai.updateRotation();
-            ninja.kunai.setAppear(true);
-            ninja.setPlayerState(PlayerState.GLIDE);
-            ninja.throwed = false;
-        }
-
-        if(mouseHandler.isTouchDown()) {
-            ninja.kunai.setAppear(false);
-            ninja.kunai.body.setLinearVelocity(0,0);
-            ninja.body.setTransform(ninja.kunai.body.getPosition(), 0);
-            ninja.setPlayerState(PlayerState.FLASH);
-        }
-        if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
-            System.out.println(ninja.kunai.body.getLinearVelocity().y);
-            if(ninja.kunai.isAppear()) {
-
-            }else {
-                ninja.kunai.body.setTransform(ninja.body.getPosition(), 0);
-            }
-            // nếu đang trên bục thì ninja.setPlayerState(PlayerState.IDLE);
-            if(ninja.throwed) {
-                if(ninja.getPlayerState() != PlayerState.FLASH) ninja.setPlayerState(PlayerState.GLIDE);
-            }
-            else ninja.setPlayerState(PlayerState.THROW);
-        }
-
-        ninja.draw(game.batch, gameMap.getStateTime());
-
-//        System.out.println(ninja.body.getLinearVelocity().y);
-        game.batch.end();
-
-        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+        Body body = BoxManager.createBox(12, 12, 20, 20, false, GameMap.world, 0);
+        GameMap.world.destroyBody(body);
+        body = null;
+        if(body == null) System.out.println("heheh");
+        else System.out.println("nônno");
     }
     @Override
     public void resize (int width, int height) {

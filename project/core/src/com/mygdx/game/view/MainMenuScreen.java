@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.MyGdxGame;
 
 public class MainMenuScreen implements Screen {
-//    private static final int EXIT_BUTTON_WIDTH = 500;
+    //    private static final int EXIT_BUTTON_WIDTH = 500;
 //    private static final int EXIT_BUTTON_HEIGHT = 90;
     private static final int NEWGAME_BUTTON_WIDTH = 320;
     private static final int NEWGAME_BUTTON_HEIGHT = 80;
@@ -20,7 +20,7 @@ public class MainMenuScreen implements Screen {
     private static final int STORE_BUTTON_WIDTH = 240;
     private static final int STORE_BUTTON_HEIGHT = 60;
 
-//    private static final int EXIT_BUTTON_Y = 50;
+    //    private static final int EXIT_BUTTON_Y = 50;
     private static final int NEWGAME_BUTTON_Y = 350;
     private static final int CONTINUE_BUTTON_Y = 255;
     private static final int HIGHSCORE_BUTTON_Y = 180;
@@ -93,7 +93,9 @@ public class MainMenuScreen implements Screen {
             game.batch.draw(newgameButtonActive, MyGdxGame.WIDTH/2 - NEWGAME_BUTTON_WIDTH/2, NEWGAME_BUTTON_Y, NEWGAME_BUTTON_WIDTH, NEWGAME_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
                 this.dispose();
-                game.setScreen(new MainGameScreenTest(game));
+//                game.setScreen(new MainGameScreenTest(game));
+                game.setScreen(new EnterNameScreen(game));
+//                game.setScreen(new MainGameScreen(game));
             }
         } else {
             game.batch.draw(newgameButtonInActive, MyGdxGame.WIDTH/2 - NEWGAME_BUTTON_WIDTH/2, NEWGAME_BUTTON_Y, NEWGAME_BUTTON_WIDTH, NEWGAME_BUTTON_HEIGHT);
