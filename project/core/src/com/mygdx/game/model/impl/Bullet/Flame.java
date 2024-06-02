@@ -23,7 +23,7 @@ public class Flame extends EnemyBullet {
         super(new Texture("Entities/flame/flame_5.png"), enemy);
         this.width=20*enemy.getLevel();
         this.height=10*enemy.getLevel();
-        this.speed = 100f/enemy.getLevel();
+        this.speed = 125f/enemy.getLevel();
         this.stateTime = 0;
         this.started = false;
         this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);

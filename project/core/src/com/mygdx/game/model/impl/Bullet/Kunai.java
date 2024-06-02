@@ -17,7 +17,6 @@ public class Kunai extends PlayerBullet {
         this.width=40;
         this.height=8;
 
-
         this.body = BoxManager.createBox(x, y, width, height, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
 

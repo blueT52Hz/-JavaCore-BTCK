@@ -6,19 +6,25 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.controller.CoinCounter;
 import com.mygdx.game.controller.LevelManager;
 import com.mygdx.game.model.Coin;
 import com.mygdx.game.model.Enemy;
+import com.mygdx.game.model.PlayerScore;
+
+import java.util.ArrayList;
 
 
 public class GameMap extends Matrix4 {
-    public static World world = new World(new Vector2(0, -1f), false);
-    private final LevelManager levelManager;
+    public static World world = new World(new Vector2(0, -2f), false);
+    private LevelManager levelManager;
     private float stateTime;
     public Body leftWall, rightWall, bottomWall, topWall;
+    public static PlayerScore playerScore;
     public GameMap() {
+        playerScore = new PlayerScore();
         stateTime = 0;
-        levelManager = LevelManager.getInstance();
+        levelManager = new LevelManager();
     }
     public void draw(SpriteBatch spriteBatch) {
         stateTime += Gdx.graphics.getDeltaTime();
@@ -46,6 +52,11 @@ public class GameMap extends Matrix4 {
         }
     }
 
+    // Thêm phương thức kiểm tra tất cả quái vật đã bị tiêu diệt
+    public boolean allEnemiesDefeated() {
+        return levelManager.enemies.get(levelManager.getCurrentLevel()).isEmpty();
+    }
+
     public void drawBackground(SpriteBatch spriteBatch) {
         levelManager.drawMap(spriteBatch);
     }
@@ -56,5 +67,12 @@ public class GameMap extends Matrix4 {
 
     public float getStateTime() {
         return stateTime;
+    }
+
+    public static void destroyBody(Body body) {
+        if(!body.getFixtureList().isEmpty()) System.out.println(body.getFixtureList().first().getUserData());
+        world.destroyBody(body);
+
+        body = null;
     }
 }

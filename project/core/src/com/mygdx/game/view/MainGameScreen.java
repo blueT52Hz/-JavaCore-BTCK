@@ -41,7 +41,7 @@ public class MainGameScreen implements Screen {
         float h = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
-        contactListener = new CustomContactListener();
+        contactListener = new CustomContactListener(this.gameMap);
         GameMap.world.setContactListener(contactListener);
         b2dr = new Box2DDebugRenderer();
 
@@ -62,73 +62,11 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void render (float deltaTime) {
-        update(Gdx.graphics.getDeltaTime());
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
-        // Test sinh level
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            gameMap.getLevelManager().nextLevel();
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            gameMap.getLevelManager().preLevel();
-            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
-        }
-
-        game.batch.begin();
-        gameMap.draw(game.batch);
-
-        ninja.kunai.update();
-
-        if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
-        if(mouseHandler.isDrag()) {
-            ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
-            ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setBounds(ninja.getBody().getPosition().x*PPM - 75, ninja.getBody().getPosition().y*PPM - 10, 150, 20);
-            ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
-            ninja.navigationArrow.draw(game.batch);
-
-            ninja.kunai.updateRotation();
-            ninja.kunai.setAppear(true);
-
-
-            ninja.throwed = false;
-        }
-
-
-        // xử lí khi nhấn xuống
-        if(mouseHandler.isTouchDown()) {
-            ninja.kunai.setAppear(false);
-            ninja.kunai.body.setLinearVelocity(0,0);
-            ninja.getBody().setTransform(ninja.kunai.body.getPosition(), 0);
-            ninja.setPlayerState(PlayerState.FLASH);
-        }
-
-
-
-        // xử lí khi không làm gì
-        if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
-
-            // nếu kunai đang bay
-            if(ninja.kunai.isAppear()) {
-                ninja.kunai.updateSpeed();
-            } else {
-                ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
-            }
-
-
-            if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
-
-        }
-
-
-        ninja.draw(game.batch, gameMap.getStateTime());
-
-        game.batch.end();
-
-        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+        Body body = BoxManager.createBox(12, 12, 20, 20, false, GameMap.world, 0);
+        GameMap.world.destroyBody(body);
+        body = null;
+        if(body == null) System.out.println("heheh");
+        else System.out.println("nônno");
     }
     @Override
     public void resize (int width, int height) {

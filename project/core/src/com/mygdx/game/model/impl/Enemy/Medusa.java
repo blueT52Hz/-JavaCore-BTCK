@@ -43,7 +43,6 @@ public class Medusa extends Enemy {
 
     @Override
     public void createBody() {
-        if(this.body != null) GameMap.world.destroyBody(body);
         this.body = BoxManager.createBox(x, y, width-40*level, height-40*level, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
         this.body.setGravityScale(0);
@@ -73,8 +72,7 @@ public class Medusa extends Enemy {
                     this.dead = true;
                     return;
                 }
-                if(this.speed>0) spriteBatch.draw(deadImg, x, y, this.width, this.height);
-                if (this.speed<=0) spriteBatch.draw(deadImg, x, y, this.width, this.height);
+                spriteBatch.draw(deadImg, x, y, this.width, this.height);
                 break;
             case ATTACK:
                 Texture attackImg = (this.speed>=0) ? (Texture) attackRightAnimation.getKeyFrame(this.stateTime, false) : (Texture) attackLeftAnimation.getKeyFrame(this.stateTime, false);
@@ -101,14 +99,13 @@ public class Medusa extends Enemy {
             else enemyBulletsRemove.add(enemyBullet);
         }
         for (EnemyBullet enemyBullet : enemyBulletsRemove) {
-            GameMap.world.destroyBody(enemyBullet.getBody());
+            GameMap.destroyBody(enemyBullet.getBody());
             this.enemyBulletsBodies.remove(enemyBullet.getBody());
             this.enemyBullets.remove(enemyBullet);
         }
-        if(TimeUtils.millis() - lastTimeAttack > 3000/level) {
+        if(TimeUtils.millis() - lastTimeAttack > 3000/level && enemyState != EnemyState.DEAD) {
             enemyState = EnemyState.ATTACK;
         }
-
 
         if(enemyState == EnemyState.MOVE) {
             x += speed * Gdx.graphics.getDeltaTime();
@@ -125,11 +122,12 @@ public class Medusa extends Enemy {
     }
 
     public void spawnEnemyBullet() {
-        Flame flame = new Flame(body.getPosition().x*PPM, body.getPosition().y*PPM, this);
+        lastTimeAttack = TimeUtils.millis();
+        if(!target.isAppear()) return;
+        Flame flame = new Flame(x+width/2, y+height/2, this);
         flame.updateRotation(target.getX(), target.getY());
         enemyBullets.add(flame);
         enemyBulletsBodies.add(flame.getBody());
-        lastTimeAttack = TimeUtils.millis();
     }
 
     @Override

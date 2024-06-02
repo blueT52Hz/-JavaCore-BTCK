@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.controller.BoxManager;
 import com.mygdx.game.model.Player;
+import com.mygdx.game.model.PlayerBullet;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Bullet.Kunai;
 import com.mygdx.game.view.GameMap;
@@ -22,6 +23,7 @@ public class Ninja extends Player {
 
     public Ninja() {
         super();
+        this.place = 0;
         this.x = 200;
         this.y = 50;
         this.width = 32*3/2;
@@ -76,6 +78,9 @@ public class Ninja extends Player {
 
     @Override
     public void update() {
+        if(!isAppear()) {
+            return;
+        }
         if(playerState == PlayerState.GLIDE)    this.body.setLinearVelocity(0, -50f/PPM);
         if(playerState == PlayerState.IDLE)     this.body.setLinearVelocity(0, 0);
         x = body.getPosition().x*PPM;
@@ -101,9 +106,12 @@ public class Ninja extends Player {
 
     @Override
     public void createBody() {
-        if(this.body != null) GameMap.world.destroyBody(body);
         this.body = BoxManager.createBox(x, y, width-15, height, false, GameMap.world, 0);
         this.body.getFixtureList().first().setUserData(this);
     }
 
+    @Override
+    public PlayerBullet getPlayerBullet() {
+        return kunai;
+    }
 }

@@ -14,6 +14,7 @@ public abstract class Entity {
     protected float stateTime;
     protected boolean dead;
     protected Body body;
+    protected int place;
 
     public abstract void draw(SpriteBatch spriteBatch, float gameMapStateTime);
     public abstract void update();
@@ -65,6 +66,13 @@ public abstract class Entity {
 
     public Body getBody() {
         return body;
+    }
+
+    public int getPlace() {
+        return place;
+    }
+    public void setPlace(int place) {
+        this.place = place;
     }
 
     public boolean isDead() {
