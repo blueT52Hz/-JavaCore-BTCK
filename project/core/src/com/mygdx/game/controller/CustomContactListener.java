@@ -2,7 +2,6 @@ package com.mygdx.game.controller;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
-import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.model.*;
 import com.mygdx.game.model.constant.EnemyState;
 import com.mygdx.game.model.constant.PlayerState;
@@ -11,7 +10,6 @@ import com.mygdx.game.model.impl.Bullet.Kunai;
 import com.mygdx.game.model.impl.Player.Ninja;
 import com.mygdx.game.view.Brick;
 import com.mygdx.game.view.GameMap;
-import com.mygdx.game.view.MainGameScreenTest;
 
 public class CustomContactListener implements ContactListener {
     private GameMap gameMap;
