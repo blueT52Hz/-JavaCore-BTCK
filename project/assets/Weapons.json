@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Kunai",
+    "price": 0,
+    "unlocked": true,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Bomerang",
+    "price": 20,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Dart",
+    "price": 30,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "FoldingFan",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Rugby",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Shield",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Shuriken",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Hammer",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  },
+  {
+    "name": "Bomb",
+    "price": 40,
+    "unlocked": false,
+    "width": 50,
+    "height": 50
+
+  }
+]

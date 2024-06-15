@@ -2,6 +2,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.view.MainMenuScreen;
+import com.mygdx.game.view.StoreArmsScreen;
 
 
 public class MyGdxGame extends Game {
@@ -19,9 +20,9 @@ public class MyGdxGame extends Game {
 	public void render () {
 		super.render();
 	}
-	@Override
-	public void dispose() {
-		batch.dispose();
+
+	public void goToStore() {
+		this.setScreen(new StoreArmsScreen(this));
 	}
 
 }
