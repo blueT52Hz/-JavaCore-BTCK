@@ -18,14 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.controller.BoxManager;
-import com.mygdx.game.controller.CoinCounter;
-import com.mygdx.game.controller.CustomContactListener;
-import com.mygdx.game.controller.MouseHandler;
+import com.mygdx.game.controller.*;
 import com.mygdx.game.model.Coin;
+import com.mygdx.game.model.constant.ConstantSound;
 import com.mygdx.game.model.constant.PlayerState;
 import com.mygdx.game.model.impl.Player.Ninja;
-
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import java.util.ArrayList;
 
 import static com.mygdx.game.model.constant.Constants.PPM;
@@ -48,11 +47,30 @@ public class MainGameScreenTest implements Screen {
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     private String playerName;
     private Body platform;
+
+    private AudioManager audioManager;
+    private Music BossFightBGM, DefeatedBGM, NormalFightBGM;
+    private Sound kunaiThrowSound, ninjaDeadSound, playerTeleportSound;
+    private boolean hasPlayedTeleportSound = false;
+    private boolean hasPlayedKunaiThrowedSound = false;
+    private boolean hasPlayedNinjaDeadSound = false;
+
     public MainGameScreenTest(MyGdxGame game, String playerName) {
         this.game = game;
         this.playerName = playerName;
         this.fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
+
+        this.audioManager = AudioManager.getInstance();
+        NormalFightBGM = ConstantSound.normalFightBGM;
+        BossFightBGM = ConstantSound.bossFightBGM;
+        DefeatedBGM = ConstantSound.defeatedBGM;
+
+        kunaiThrowSound = ConstantSound.kunaiThrowSound;
+        playerTeleportSound = ConstantSound.playerTeleportSound;
+        ninjaDeadSound = ConstantSound.ninjaDeadSound;
     }
+
+
     @Override
     public void show () {
         gameMap = new GameMap();
@@ -109,7 +127,6 @@ public class MainGameScreenTest implements Screen {
         coinTexture = new Texture(Gdx.files.internal("Coin/Coin(5).png"));
 
         Gdx.app.log("Font", "Font generated successfully.");
-
     }
 
     @Override
@@ -117,7 +134,6 @@ public class MainGameScreenTest implements Screen {
         update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         // Test sinh level
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
@@ -129,6 +145,27 @@ public class MainGameScreenTest implements Screen {
             System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
         }
 
+        // Kiểm tra và cập nhật âm thanh cho từng trường hợp level
+        int currentLevel = gameMap.getLevelManager().currentLevel;
+        if (currentLevel % 10 == 0 && currentLevel!= 0) {
+            // Level chia hết cho 10 (ví dụ: level 10, 20, 30,...)
+            if (BossFightBGM != null && !BossFightBGM.isPlaying()) {
+                BossFightBGM.play();
+            }
+            if (NormalFightBGM != null && NormalFightBGM.isPlaying()) {
+                NormalFightBGM.stop();
+            }
+        } else {
+            // Các level còn lại
+            if (NormalFightBGM != null && !NormalFightBGM.isPlaying()) {
+//                NormalFightBGM.setVolume(1.0f);
+                NormalFightBGM.play();
+            }
+            if (BossFightBGM != null && BossFightBGM.isPlaying()) {
+                BossFightBGM.stop();
+            }
+        }
+
         game.batch.begin();
         gameMap.draw(game.batch);
 
@@ -137,7 +174,7 @@ public class MainGameScreenTest implements Screen {
         layout.setText(lvFont, levelText);
         float textWidth = layout.width;
         float x = (Gdx.graphics.getWidth() - textWidth) / 2;
-        float y = gameMap.bottomWall.getPosition().y * PPM + 130; // Đặt ở dưới màn hình, trên downWall một chút
+        float y = gameMap.bottomWall.getPosition().y * PPM + 130;
 
         lvFont.setColor(1, 1, 1, 0.1f); // Đặt độ mờ là 50b%
         lvFont.draw(game.batch, levelText, x, y);
@@ -168,27 +205,51 @@ public class MainGameScreenTest implements Screen {
         }
 
         // xử lí khi nhấn xuống
-        if(ninja.getPlayerState() != PlayerState.DEAD && mouseHandler.isTouchDown()) {
+        if (ninja.getPlayerState() != PlayerState.DEAD && mouseHandler.isTouchDown()) {
+            if (!hasPlayedTeleportSound) {
+                audioManager.playSound(playerTeleportSound);
+                hasPlayedTeleportSound = true; // Đánh dấu là đã phát âm thanh
+            }
             ninja.setAppear(true);
             ninja.getBody().setTransform(ninja.kunai.body.getPosition(), 0);
             ninja.setPlayerState(PlayerState.FLASH);
             ninja.setPlace(gameMap.getLevelManager().currentLevel);
 
             ninja.kunai.setAppear(false);
-            ninja.kunai.body.setLinearVelocity(0,0);
+            ninja.kunai.body.setLinearVelocity(0, 0);
+        } else {
+            hasPlayedTeleportSound = false; // Reset lại biến khi không còn thực hiện hành động
         }
 
         // xử lí khi không làm gì
         if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
             // nếu kunai đang bay
             if(ninja.kunai.isAppear())  ninja.kunai.updateSpeed();
-            else                        ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
+            else {
+                ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
+            }
             if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
         }
         if(ninja.getPlace() == gameMap.getLevelManager().currentLevel) ninja.draw(game.batch, gameMap.getStateTime());
 
 
+
         if (ninja.getPlayerState() == PlayerState.DEAD) {
+
+
+                if (NormalFightBGM != null && NormalFightBGM.isPlaying()) {
+                    NormalFightBGM.stop();
+                }
+                if (BossFightBGM != null && BossFightBGM.isPlaying()) {
+                    BossFightBGM.stop();
+                }
+            if (!hasPlayedNinjaDeadSound) {
+                audioManager.playSound(ninjaDeadSound);
+                hasPlayedNinjaDeadSound = true; // Đánh dấu là đã phát âm thanh
+            }
+                if (DefeatedBGM != null && !DefeatedBGM.isPlaying()) {
+                    DefeatedBGM.play();
+                }
             Array<Body> bodies = new Array<>();
             GameMap.world.getBodies(bodies);
             System.out.println(bodies.size);
@@ -218,8 +279,15 @@ public class MainGameScreenTest implements Screen {
             taptocontinueFont.draw(game.batch, continueText, continueTextX, continueTextY);
 
             if(Gdx.input.justTouched()) {
+//                    hasPlayedNinjaDeadSound = false;
+//                this.dispose();
+//                game.setScreen(new MainMenuScreen(game));
+            }
+            else {
+
             }
         }
+
 
         game.batch.end();
 
@@ -247,14 +315,33 @@ public class MainGameScreenTest implements Screen {
 
     @Override
     public void dispose() {
-        b2dr.dispose();
-        GameMap.world.dispose();
-        game.batch.dispose();
+        if (b2dr != null) {
+            b2dr.dispose();
+        }
+        if (GameMap.world != null) {
+            GameMap.world.dispose();
+        }
+        if (game != null && game.batch != null) {
+            game.batch.dispose();
+        }
         if (fontGenerator != null) {
             fontGenerator.dispose();
         }
-        tableTexture.dispose();
-        coinTexture.dispose();
+        if (tableTexture != null) {
+            tableTexture.dispose();
+        }
+        if (coinTexture != null) {
+            coinTexture.dispose();
+        }
+        if (BossFightBGM != null) {
+            BossFightBGM.dispose();
+        }
+        if (DefeatedBGM != null) {
+            DefeatedBGM.dispose();
+        }
+        if (NormalFightBGM != null) {
+            NormalFightBGM.dispose();
+        }
     }
     public void cameraUpdate(float delta) {
         Vector3 position = camera.position;
