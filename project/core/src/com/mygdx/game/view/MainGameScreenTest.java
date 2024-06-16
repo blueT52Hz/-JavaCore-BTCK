@@ -68,6 +68,8 @@ public class MainGameScreenTest implements Screen {
         kunaiThrowSound = ConstantSound.kunaiThrowSound;
         playerTeleportSound = ConstantSound.playerTeleportSound;
         ninjaDeadSound = ConstantSound.ninjaDeadSound;
+
+
     }
 
 
@@ -128,41 +130,39 @@ public class MainGameScreenTest implements Screen {
 
         Gdx.app.log("Font", "Font generated successfully.");
     }
-
     @Override
-    public void render (float deltaTime) {
+    public void render(float deltaTime) {
         update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Test sinh level
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             gameMap.getLevelManager().nextLevel();
             System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             gameMap.getLevelManager().preLevel();
             System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
         }
 
         // Kiểm tra và cập nhật âm thanh cho từng trường hợp level
         int currentLevel = gameMap.getLevelManager().currentLevel;
-        if (currentLevel % 10 == 0 && currentLevel!= 0) {
+        if (currentLevel % 10 == 0 && currentLevel != 0) {
             // Level chia hết cho 10 (ví dụ: level 10, 20, 30,...)
             if (BossFightBGM != null && !BossFightBGM.isPlaying()) {
-                BossFightBGM.play();
+                audioManager.playMusic(BossFightBGM);
             }
             if (NormalFightBGM != null && NormalFightBGM.isPlaying()) {
-                NormalFightBGM.stop();
+                audioManager.stopMusic(NormalFightBGM);
             }
         } else {
             // Các level còn lại
             if (NormalFightBGM != null && !NormalFightBGM.isPlaying()) {
-//                NormalFightBGM.setVolume(1.0f);
-                NormalFightBGM.play();
+                audioManager.playMusic(NormalFightBGM);
             }
             if (BossFightBGM != null && BossFightBGM.isPlaying()) {
-                BossFightBGM.stop();
+                audioManager.stopMusic(BossFightBGM);
             }
         }
 
@@ -193,10 +193,10 @@ public class MainGameScreenTest implements Screen {
         ninja.kunai.update();
 
         if (ninja.kunai.isAppear()) ninja.kunai.draw(game.batch);
-        if(mouseHandler.isDrag()) {
+        if (mouseHandler.isDrag()) {
             ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
             ninja.navigationArrow.setOriginCenter();
-            ninja.navigationArrow.setBounds(ninja.getBody().getPosition().x*PPM - 75, ninja.getBody().getPosition().y*PPM - 10, 150, 20);
+            ninja.navigationArrow.setBounds(ninja.getBody().getPosition().x * PPM - 75, ninja.getBody().getPosition().y * PPM - 10, 150, 20);
             ninja.navigationArrow.setRotation(ninja.kunai.getRotation());
             ninja.navigationArrow.draw(game.batch);
             ninja.kunai.updateRotation();
@@ -222,34 +222,43 @@ public class MainGameScreenTest implements Screen {
         }
 
         // xử lí khi không làm gì
-        if(!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
+        if (!mouseHandler.isDrag() && !mouseHandler.isTouchDown()) {
             // nếu kunai đang bay
-            if(ninja.kunai.isAppear())  ninja.kunai.updateSpeed();
-            else {
-                ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
-            }
-            if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
-        }
-        if(ninja.getPlace() == gameMap.getLevelManager().currentLevel) ninja.draw(game.batch, gameMap.getStateTime());
+            if (ninja.kunai.isAppear()) {
+                if (!hasPlayedKunaiThrowedSound) {
+                    hasPlayedKunaiThrowedSound = true;
+                    audioManager.playSound(kunaiThrowSound);
+                }
 
+                ninja.kunai.updateSpeed();
+            } else {
+                ninja.kunai.body.setTransform(ninja.getBody().getPosition(), 90);
+
+            }
+            if (!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
+        } else hasPlayedKunaiThrowedSound = false;
+        if (ninja.getPlace() == gameMap.getLevelManager().currentLevel) ninja.draw(game.batch, gameMap.getStateTime());
 
 
         if (ninja.getPlayerState() == PlayerState.DEAD) {
 
 
-                if (NormalFightBGM != null && NormalFightBGM.isPlaying()) {
-                    NormalFightBGM.stop();
-                }
-                if (BossFightBGM != null && BossFightBGM.isPlaying()) {
-                    BossFightBGM.stop();
-                }
+            // Ensure all music stops when the player dies
+            if (NormalFightBGM != null) {
+                audioManager.stopMusic(NormalFightBGM);
+            }
+            if (BossFightBGM != null) {
+                audioManager.stopMusic(BossFightBGM);
+            }
             if (!hasPlayedNinjaDeadSound) {
                 audioManager.playSound(ninjaDeadSound);
                 hasPlayedNinjaDeadSound = true; // Đánh dấu là đã phát âm thanh
             }
-                if (DefeatedBGM != null && !DefeatedBGM.isPlaying()) {
-                    DefeatedBGM.play();
-                }
+            if (DefeatedBGM != null) {
+                audioManager.playMusic(DefeatedBGM);
+            }
+
+
             Array<Body> bodies = new Array<>();
             GameMap.world.getBodies(bodies);
             System.out.println(bodies.size);
@@ -278,21 +287,17 @@ public class MainGameScreenTest implements Screen {
             float continueTextY = (Gdx.graphics.getHeight() - continueTextHeight) / 2 - 30;
             taptocontinueFont.draw(game.batch, continueText, continueTextX, continueTextY);
 
-            if(Gdx.input.justTouched()) {
-//                    hasPlayedNinjaDeadSound = false;
+            if (Gdx.input.justTouched()) {
+                // Reset the flag and transition to the main menu
+//                hasPlayedNinjaDeadSound = false;
 //                this.dispose();
 //                game.setScreen(new MainMenuScreen(game));
             }
-            else {
-
-            }
         }
 
-
         game.batch.end();
-
-//        b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
+
     @Override
     public void resize (int width, int height) {
         camera.setToOrtho(false, width, height);
