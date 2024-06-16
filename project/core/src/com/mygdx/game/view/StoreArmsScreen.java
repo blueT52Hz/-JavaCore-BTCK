@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -16,7 +18,7 @@ import com.mygdx.game.controller.CoinCounter;
 import com.mygdx.game.model.PlayerInventory;
 import com.mygdx.game.model.impl.Bullet.Weapon;
 import com.badlogic.gdx.graphics.Pixmap;
-import org.w3c.dom.Text;
+import com.mygdx.game.model.impl.Player.Ninja;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -25,6 +27,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.mygdx.game.view.MainMenuScreen.gameMap;
 
 public class StoreArmsScreen extends BaseScreen {
     private final MyGdxGame game;
@@ -39,13 +43,18 @@ public class StoreArmsScreen extends BaseScreen {
     private final Texture shieldTexture;
     private final Texture rugbyTexture;
     private final Texture skinsTexture;
+    private final Texture usingTexture;
+    private Ninja player;
 
     ArrayList<Weapon> weapons = new ArrayList<Weapon>();
+    private BitmapFont coinFont;
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+    private FreeTypeFontGenerator fontGenerator;
 
-    public StoreArmsScreen(MyGdxGame game) {
+    public StoreArmsScreen(MyGdxGame game, Ninja player) {
         super(game);
         this.game = game;
-
+        this.player = player;
         coinTexture = new Texture(Gdx.files.internal("Coin/Coin(5).png"));
         kunaiTexture = new Texture(Gdx.files.internal("Bullet/Kunai.png"));
         bombTexture = new Texture(Gdx.files.internal("Bullet/Bomb.png"));
@@ -57,6 +66,9 @@ public class StoreArmsScreen extends BaseScreen {
         shurikenTexture = new Texture(Gdx.files.internal("Bullet/Shuriken.png"));
         dartTexture = new Texture(Gdx.files.internal("Bullet/Dart.png"));
         skinsTexture = new Texture(Gdx.files.internal("Button/SkinsButton.png"));
+        usingTexture = new Texture(Gdx.files.internal("using.png"));
+        this.fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
+        this.parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
     }
 
     @Override
@@ -68,12 +80,63 @@ public class StoreArmsScreen extends BaseScreen {
     public void show() {
         Gdx.input.setInputProcessor(stage);
 
+        loadWeaponsFromJSON("Weapons.json");
+
+    }
+
+    private void handleWeaponButtonClick(int index) {
+        // Handle button click logic here, such as buying or equipping the weapon
+        Weapon weapon = weapons.get(index);
+        if (CoinCounter.getCoinIngame() >= weapon.getPrice() && !weapon.isUnlocked()) {
+            CoinCounter.updateCoin(-weapon.getPrice()); // Subtract coins
+            weapon.setUnlocked(true); // Mark weapon as unlocked
+            PlayerInventory.addItem(weapon.getName()); // Add weapon to inventory
+        }
+        for (Weapon w : weapons) {
+            w.setEquipped(false);
+        }
+        weapon.setEquipped(true);
+        gameMap.getLevelManager().player.changeArm(index);
+    }
+
+    private void loadWeaponsFromJSON(String filename) {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filename);
+            Type classOfT = new TypeToken<ArrayList<Weapon>>(){}.getType();
+            Gson gson = new Gson();
+            weapons = gson.fromJson(reader, classOfT);
+            for (Weapon weapon : weapons) {
+                weapon.display();
+            }
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(StoreArmsScreen.class.getName()).log(Level.SEVERE,null, e);
+        } finally {
+            if (reader != null){
+                try{
+                    reader.close();
+                }catch (IOException ex){
+                    Logger.getLogger(StoreArmsScreen.class.getName()).log(Level.SEVERE,null, ex);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.batch.begin();
+        game.batch.draw( new Texture("Button/TableHighscore.PNG"), (float) MyGdxGame.WIDTH / 2 - 180, 180, 360, 360);
+        parameter.size = 20;
+        parameter.color = Color.YELLOW;
+        coinFont = fontGenerator.generateFont(parameter);
+        game.batch.draw(coinTexture, 300, Gdx.graphics.getHeight() - 40 - 10, 35, 35);
+        String coinCount = String.valueOf(CoinCounter.getCoinIngame());
+        coinFont.draw(game.batch, coinCount, 355, Gdx.graphics.getHeight() - 25);
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-
-        loadWeaponsFromJSON("Weapons.json");
-
         Texture[] weaponTextures = {kunaiTexture, bombTexture, bomerangTexture, dartTexture, foldingFanTexture, hammerTexture, shurikenTexture, shieldTexture, rugbyTexture};
 
         int width = 90;
@@ -108,13 +171,14 @@ public class StoreArmsScreen extends BaseScreen {
         pixmap.dispose();
         TextureRegionDrawable darkBackground = new TextureRegionDrawable(new TextureRegion(darkTexture));
 
-        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
-        buttonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(skinsTexture));
-        ImageButton skinsButton = new ImageButton(buttonStyle);
+        ImageButton.ImageButtonStyle skinsButtonStyle = new ImageButton.ImageButtonStyle();
+        skinsButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(skinsTexture));
+        skinsButtonStyle.up = whiteBackground;
+        ImageButton skinsButton = new ImageButton(skinsButtonStyle);
         skinsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new StoreSkinsScreen(game));
+                game.setScreen(new StoreSkinsScreen(game, player));
                 return true;
             }
         });
@@ -156,49 +220,13 @@ public class StoreArmsScreen extends BaseScreen {
                 lockTable.add(lockImage).size(10, 10).top().right().padTop(-5).padRight(-5);
                 weaponButton.addActor(lockTable);
             }
-        }
-
-    }
-
-    private void handleWeaponButtonClick(int index) {
-        // Handle button click logic here, such as buying or equipping the weapon
-        Weapon weapon = weapons.get(index);
-        if (CoinCounter.getCoinIngame() >= weapon.getPrice() && !weapon.isUnlocked()) {
-            CoinCounter.updateCoin(-weapon.getPrice()); // Subtract coins
-            weapon.setUnlocked(true); // Mark weapon as unlocked
-            PlayerInventory.addItem(weapon.getName()); // Add weapon to inventory
-        }
-    }
-
-    private void loadWeaponsFromJSON(String filename) {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(filename);
-            Type classOfT = new TypeToken<ArrayList<Weapon>>(){}.getType();
-            Gson gson = new Gson();
-            weapons = gson.fromJson(reader, classOfT);
-            for (Weapon weapon : weapons) {
-                weapon.display();
-            }
-        } catch (FileNotFoundException e) {
-            Logger.getLogger(StoreArmsScreen.class.getName()).log(Level.SEVERE,null, e);
-        } finally {
-            if (reader != null){
-                try{
-                    reader.close();
-                }catch (IOException ex){
-                    Logger.getLogger(StoreArmsScreen.class.getName()).log(Level.SEVERE,null, ex);
-                }
+            if (weapons.get(i).isEquipped()) {
+                Image usingImage = new Image(usingTexture);
+                usingImage.setSize(15, 15);
+                usingImage.setPosition(60, 60);
+                weaponButton.addActor(usingImage);
             }
         }
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.batch.begin();
-        game.batch.draw( new Texture("Button/TableHighscore.PNG"), (float) MyGdxGame.WIDTH / 2 - 180, 180, 360, 360);
         game.batch.end();
         stage.act(delta);
         stage.draw();

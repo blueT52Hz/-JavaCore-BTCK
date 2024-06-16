@@ -21,8 +21,4 @@ public class MyGdxGame extends Game {
 		super.render();
 	}
 
-	public void goToStore() {
-		this.setScreen(new StoreArmsScreen(this));
-	}
-
 }

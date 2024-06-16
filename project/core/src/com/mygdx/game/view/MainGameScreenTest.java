@@ -37,7 +37,7 @@ public class MainGameScreenTest implements Screen {
     MyGdxGame game;
     GameMap gameMap;
     MouseHandler mouseHandler;
-    Ninja ninja;
+    public static Ninja ninja;
     CustomContactListener contactListener;
     private BitmapFont lvFont, completeFont, taptocontinueFont, nameFont, coinFont, scoreFont;
     private FreeTypeFontGenerator fontGenerator;
@@ -51,13 +51,13 @@ public class MainGameScreenTest implements Screen {
     public MainGameScreenTest(MyGdxGame game, String playerName) {
         this.game = game;
         this.playerName = playerName;
+        this.gameMap = MainMenuScreen.gameMap;
         this.fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
     }
 
     @Override
     public void show () {
-        gameMap = new GameMap();
-        ninja = (Ninja) gameMap.getLevelManager().getPlayer();
+        ninja = gameMap.getLevelManager().player;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();

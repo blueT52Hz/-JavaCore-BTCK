@@ -1,14 +1,13 @@
-package com.mygdx.game.model.impl.Bullet;
+package com.mygdx.game.model.impl.Player;
 
-public class Weapon {
+public class Skin {
     private String name;
     private int price;
     private boolean unlocked;
     private float width;
     private float height;
     private boolean equipped;
-
-    public Weapon(String name, int price, boolean unlocked, float width, float height) {
+    public Skin(String name, int price, boolean unlocked, float width, float height) {
         this.name = name;
         this.price = price;
         this.unlocked = unlocked;
