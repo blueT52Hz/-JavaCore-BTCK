@@ -176,7 +176,7 @@ public class MainGameScreenTest implements Screen {
         float x = (Gdx.graphics.getWidth() - textWidth) / 2;
         float y = gameMap.bottomWall.getPosition().y * PPM + 130;
 
-        lvFont.setColor(1, 1, 1, 0.1f); // Đặt độ mờ là 50b%
+        lvFont.setColor(1, 1, 1, 0.1f);
         lvFont.draw(game.batch, levelText, x, y);
 
         // Vẽ tên người chơi

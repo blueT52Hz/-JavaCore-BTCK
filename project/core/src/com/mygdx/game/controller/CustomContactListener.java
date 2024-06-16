@@ -170,8 +170,6 @@ public class CustomContactListener implements ContactListener {
             Player player = (fixtureA.getUserData() instanceof Player) ? (Player) fixtureA.getUserData() : (Player) fixtureB.getUserData();
             player.setPlayerState(PlayerState.GLIDE);
         }
-
-
     }
 
     @Override
@@ -190,7 +188,6 @@ public class CustomContactListener implements ContactListener {
             contact.setEnabled(false);
         }
 
-
         if (    (fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof PlayerBullet) || (fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Player)||
                 (fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof EnemyBullet)   || (fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Enemy)  ||
                 (fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof EnemyBullet)   ||
@@ -198,7 +195,6 @@ public class CustomContactListener implements ContactListener {
             // Vô hiệu hóa va chạm đạn đồng minh
             contact.setEnabled(false);
         }
-
 
         if((fixtureA.getUserData() instanceof PlayerBullet && fixtureB.getUserData() instanceof Enemy || fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof PlayerBullet)) {
             contact.setEnabled(false);
