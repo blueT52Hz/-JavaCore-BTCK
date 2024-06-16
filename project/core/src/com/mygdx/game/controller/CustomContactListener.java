@@ -105,7 +105,7 @@ public class CustomContactListener implements ContactListener {
 
         // xử lí khi player trúng enemyBullet ==> gameover
         if((fixtureA.getUserData() instanceof EnemyBullet && fixtureB.getUserData() instanceof Player || fixtureA.getUserData() instanceof Player && fixtureB.getUserData() instanceof EnemyBullet)) {
-//            System.out.println("Nhân vật trúng đạn");
+            System.out.println("Nhân vật trúng đạn");
             EnemyBullet bullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
             Player player = (fixtureA.getUserData() instanceof EnemyBullet) ? (Player) fixtureB.getUserData() : (Player) fixtureA.getUserData();
             player.setPlayerState(PlayerState.DEAD);

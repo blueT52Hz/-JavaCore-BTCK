@@ -62,16 +62,17 @@ public class MainMenuScreen implements Screen {
 
         exitButtonActive = new Texture("ExitActive.png");
         exitButtonInActive = new Texture("ExitInActive.png");
-    }
-
-    @Override
-    public void show() {
         mainBGM = ConstantSound.mainBGM;
         if (mainBGM != null && !mainBGM.isPlaying()) {
             mainBGM.setLooping(true);
             mainBGM.setVolume(1.0f); // Điều chỉnh âm lượng theo ý muốn
             mainBGM.play();
         }
+    }
+
+    @Override
+    public void show() {
+
     }
 
     @Override
