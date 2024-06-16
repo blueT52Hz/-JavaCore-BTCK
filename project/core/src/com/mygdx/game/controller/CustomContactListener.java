@@ -108,7 +108,8 @@ public class CustomContactListener implements ContactListener {
             System.out.println("Nhân vật trúng đạn");
             EnemyBullet bullet = (fixtureA.getUserData() instanceof EnemyBullet) ? (EnemyBullet) fixtureA.getUserData() : (EnemyBullet) fixtureB.getUserData();
             Player player = (fixtureA.getUserData() instanceof EnemyBullet) ? (Player) fixtureB.getUserData() : (Player) fixtureA.getUserData();
-            player.setPlayerState(PlayerState.DEAD);
+            if (player.getPlayerState() == PlayerState.IDLE || player.getPlayerState() == PlayerState.GLIDE || player.getPlayerState() == PlayerState.THROW)
+                player.setPlayerState(PlayerState.DEAD);
             if(bullet instanceof EnemyBullet && !bullet.isCanBounce()) {
                 bullet.setAppear(false);
 //                System.out.println("Remove EnemyBullet");

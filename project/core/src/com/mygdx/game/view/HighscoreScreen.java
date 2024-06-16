@@ -23,7 +23,6 @@ public class HighscoreScreen implements Screen {
     private static final int BACK_BUTTON_Y = 30;
 
     private MyGdxGame game;
-    private BitmapFont font;
 
     private Texture backButtonActive;
     private Texture backButtonInActive;
@@ -106,6 +105,7 @@ public class HighscoreScreen implements Screen {
         if (Gdx.input.getX() < x + BACK_BUTTON_WIDTH && Gdx.input.getX() > x && MyGdxGame.HEIGHT - Gdx.input.getY() < BACK_BUTTON_Y + BACK_BUTTON_HEIGHT && MyGdxGame.HEIGHT - Gdx.input.getY() > BACK_BUTTON_Y) {
             game.batch.draw(backButtonActive, x, BACK_BUTTON_Y, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT);
             if (Gdx.input.justTouched()) {
+                this.dispose();
                 game.setScreen(new MainMenuScreen(game));
             }
         } else {
@@ -134,7 +134,8 @@ public class HighscoreScreen implements Screen {
     @Override
     public void dispose() {
         // Dispose resources
-        font.dispose();
+        headerFont.dispose();
+        playerFont.dispose();
         highscoreTexture.dispose();
         backButtonActive.dispose();
         backButtonInActive.dispose();

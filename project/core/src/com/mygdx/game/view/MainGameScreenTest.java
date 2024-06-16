@@ -288,11 +288,11 @@ public class MainGameScreenTest implements Screen {
             taptocontinueFont.draw(game.batch, continueText, continueTextX, continueTextY);
 
             if(Gdx.input.justTouched()) {
-//                    hasPlayedNinjaDeadSound = false;
-//                this.dispose();
                 if (DefeatedBGM != null && DefeatedBGM.isPlaying()) {
                     DefeatedBGM.stop();
                 }
+                //đang lỗi
+                this.dispose();
                 game.setScreen(new MainMenuScreen(game));
             }
             else {
@@ -339,6 +339,24 @@ public class MainGameScreenTest implements Screen {
         if (fontGenerator != null) {
             fontGenerator.dispose();
         }
+        if (lvFont != null) {
+            lvFont.dispose();
+        }
+        if (completeFont != null) {
+            completeFont.dispose();
+        }
+        if (taptocontinueFont != null) {
+            taptocontinueFont.dispose();
+        }
+        if (nameFont != null) {
+            nameFont.dispose();
+        }
+        if (coinFont != null) {
+            coinFont.dispose();
+        }
+        if (scoreFont != null) {
+            scoreFont.dispose();
+        }
         if (tableTexture != null) {
             tableTexture.dispose();
         }
@@ -354,7 +372,17 @@ public class MainGameScreenTest implements Screen {
         if (NormalFightBGM != null) {
             NormalFightBGM.dispose();
         }
+        if (kunaiThrowSound != null) {
+            kunaiThrowSound.dispose();
+        }
+        if (ninjaDeadSound != null) {
+            ninjaDeadSound.dispose();
+        }
+        if (playerTeleportSound != null) {
+            playerTeleportSound.dispose();
+        }
     }
+
     public void cameraUpdate(float delta) {
         Vector3 position = camera.position;
         position.x = Gdx.graphics.getWidth()/2;
