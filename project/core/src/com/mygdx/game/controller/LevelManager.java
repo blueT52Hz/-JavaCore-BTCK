@@ -27,7 +27,7 @@ public class LevelManager {
     public ArrayList<ArrayList<Brick>> bricks;
     public ArrayList<ArrayList<Enemy>> enemies;
     private ArrayList<ArrayList<Coin>> coins;
-    private Player player;
+    public Ninja player;
     private Texture startMapImage = new Texture("tiles/mapStart.png");
     private Texture mapImage = new Texture("tiles/map.png");
     public LevelManager(){

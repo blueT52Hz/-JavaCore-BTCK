@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import static com.mygdx.game.model.constant.Constants.PPM;
 
 public class MainGameScreenTest implements Screen {
-    private final float SCALE = 2.0f;
+    private final float SCALE  = 2.0f;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     MyGdxGame game;
     GameMap gameMap;
     MouseHandler mouseHandler;
-    Ninja ninja;
+    public static Ninja ninja;
     CustomContactListener contactListener;
     private BitmapFont lvFont, completeFont, taptocontinueFont, nameFont, coinFont, scoreFont;
     private FreeTypeFontGenerator fontGenerator;
@@ -51,12 +51,13 @@ public class MainGameScreenTest implements Screen {
     public MainGameScreenTest(MyGdxGame game, String playerName) {
         this.game = game;
         this.playerName = playerName;
+        this.gameMap = MainMenuScreen.gameMap;
         this.fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
     }
+
     @Override
     public void show () {
-        gameMap = new GameMap();
-        ninja = (Ninja) gameMap.getLevelManager().getPlayer();
+        ninja = gameMap.getLevelManager().player;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -73,7 +74,7 @@ public class MainGameScreenTest implements Screen {
         gameMap.topWall.getFixtureList().first().setUserData("topWall");
         gameMap.leftWall = BoxManager.createBox(8, 720/2, 16, 720, true, GameMap.world, 0);
         gameMap.leftWall.getFixtureList().first().setUserData("wall");
-        gameMap.rightWall = BoxManager.createBox(400 - 8, 720 / 2, 16, 720, true, GameMap.world, 0);
+        gameMap.rightWall = BoxManager.createBox(400-8, 720/2, 16, 720, true, GameMap.world, 0);
         gameMap.rightWall.getFixtureList().first().setUserData("wall");
 
         mouseHandler = new MouseHandler();
@@ -109,14 +110,25 @@ public class MainGameScreenTest implements Screen {
         coinTexture = new Texture(Gdx.files.internal("Coin/Coin(5).png"));
 
         Gdx.app.log("Font", "Font generated successfully.");
-  
+
     }
 
     @Override
-    public void render(float deltaTime) {
+    public void render (float deltaTime) {
         update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+        // Test sinh level
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            gameMap.getLevelManager().nextLevel();
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            gameMap.getLevelManager().preLevel();
+            System.out.println(gameMap.getLevelManager().currentLevel + " " + gameMap.getLevelManager().maxLevel);
+        }
 
         game.batch.begin();
         gameMap.draw(game.batch);
@@ -175,9 +187,7 @@ public class MainGameScreenTest implements Screen {
             if(!ninja.throwed) ninja.setPlayerState(PlayerState.THROW);
         }
         if(ninja.getPlace() == gameMap.getLevelManager().currentLevel) ninja.draw(game.batch, gameMap.getStateTime());
-            // Vẽ tên người chơi
-            String playerName = "Name: "; // Thay thế bằng tên thực tế của người chơi
-            nameFont.draw(game.batch, playerName, 20, Gdx.graphics.getHeight() - 10);
+
 
         if (ninja.getPlayerState() == PlayerState.DEAD) {
             Array<Body> bodies = new Array<>();
@@ -212,24 +222,28 @@ public class MainGameScreenTest implements Screen {
             }
         }
 
-            scoreFont.draw(game.batch, "Score: " + Integer.toString(gameMap.playerScore.getScore()), Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
-
-        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+        game.batch.end();
+//        b2dr.render(GameMap.world, camera.combined.scl(PPM));
     }
-
     @Override
-    public void resize(int width, int height) {
+    public void resize (int width, int height) {
         camera.setToOrtho(false, width, height);
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+
+    }
 
     @Override
     public void dispose() {
@@ -250,14 +264,9 @@ public class MainGameScreenTest implements Screen {
         camera.update();
     }
 
-    public void update(float deltaTime) {
+    public void update(float delta) {
         GameMap.world.step(1 / 60f, 6, 2);
-        cameraUpdate();
-        mouseHandler.update();
-        ninja.update(deltaTime);
-    }
-
-    private void cameraUpdate() {
-        b2dr.render(GameMap.world, camera.combined.scl(PPM));
+        cameraUpdate(delta);
+        game.batch.setProjectionMatrix(camera.combined);
     }
 }

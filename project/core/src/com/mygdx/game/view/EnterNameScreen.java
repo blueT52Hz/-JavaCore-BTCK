@@ -14,36 +14,23 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.MyGdxGame;
 
-public class EnterNameScreen implements Screen {
-    private MyGdxGame game;
-    private Stage stage;
-    private TextField nameInput;
-    private Texture background;
-    private BitmapFont font;
-
-    private int score;
-    private int level;
+public class EnterNameScreen extends BaseScreen {
+    private final TextField nameInput;
+    private final Texture background;
+    private final BitmapFont font;
 
     public EnterNameScreen(MyGdxGame game) {
-        this.game = game;
-
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
-        background = new Texture("Button/TableHighscore.png"); // Đường dẫn đến hình nền của bạn
-
+        super(game);
+        background = new Texture("Button/TableHighscore.png");
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("MinecraftRegular-Bmg3.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 24;
         font = generator.generateFont(parameter);
         generator.dispose();
-
-        //Skin skin = new Skin(Gdx.files.internal("uiskin.json")); // Sử dụng skin mặc định
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
@@ -56,8 +43,7 @@ public class EnterNameScreen implements Screen {
         textFieldStyle.fontColor = Color.BLACK;
 
         Texture whiteTexture = new Texture("white.png");
-        Drawable whiteDrawable = new TextureRegionDrawable(new TextureRegion(whiteTexture));
-        textFieldStyle.background = whiteDrawable;
+        textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(whiteTexture));
 
         textFieldStyle.cursor = new TextureRegionDrawable(new Texture(Gdx.files.internal("cursor.png")));
         textFieldStyle.cursor.setMinWidth(1f); // Độ rộng của con trỏ
@@ -92,44 +78,21 @@ public class EnterNameScreen implements Screen {
     }
 
     @Override
-    public void show() {
+    protected void onBackButtonPressed() {
+        game.setScreen(new MainMenuScreen(game));
     }
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.begin();
-        float backgroundX = (Gdx.graphics.getWidth() - 360) / 2;
-        float backgroundY = (Gdx.graphics.getHeight() - 200) / 2;
+        float backgroundX = (float) (Gdx.graphics.getWidth() - 360) / 2;
+        float backgroundY = (float) (Gdx.graphics.getHeight() - 200) / 2;
         game.batch.draw(background, backgroundX, backgroundY, 360, 200);
         game.batch.end();
 
         stage.act(delta);
         stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void hide() {
-        stage.dispose();
-        background.dispose();
-        font.dispose();
-    }
-
-    @Override
-    public void dispose() {
     }
 }
